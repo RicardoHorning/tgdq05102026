@@ -164,6 +164,17 @@
     .guia-info h4 { color: var(--primary); margin-bottom: 4px; font-size: 1rem; }
     .guia-info p { font-size: 0.9rem; color: #444; }
 
+    .id-explicacao-box {
+      background: #e8f0fe;
+      border: 1px solid #b6d4fe;
+      padding: 18px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+    .id-explicacao-box h4 { color: var(--primary); margin-bottom: 8px; font-size: 1rem; }
+    .id-explicacao-box ul { margin-left: 20px; font-size: 0.88rem; color: #333; }
+    .id-explicacao-box li { margin-bottom: 6px; }
+
     .cases-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -325,7 +336,7 @@
       </form>
     </div>
 
-    <!-- PASSO 2: ORIENTAÇÃO FÁCIL E PASSO A PASSO -->
+    <!-- PASSO 2: ORIENTAÇÃO FÁCIL E EXPLICATIVA -->
     <div id="step-2" class="card step-content">
       <h2>2. Guia Passo a Passo: O que vocês devem fazer?</h2>
       <p class="description">Siga este roteiro simples para realizar todo o trabalho com sucesso:</p>
@@ -370,6 +381,17 @@
             <p>Aqui mesmo na plataforma, sua equipe vai responder a 5 perguntas de decisão e colar os links finais do trabalho.</p>
           </div>
         </div>
+      </div>
+
+      <!-- NOVO PAINEL EXPLICATIVO SOBRE O ID NAS PLANILHAS -->
+      <div class="id-explicacao-box">
+        <h4>🔑 Entendendo o Código de Identificação (ID) na Planilha:</h4>
+        <ul>
+          <li><strong>O que é o ID?</strong> É o código único da linha (ex: `CLI-101`, `PED-2001`, `SKU-105`, `SAC-8001`).</li>
+          <li><strong>ID do Cliente (Caso 1):</strong> Representa o <u>cadastro do cliente</u>. Como a mesma pessoa pode ter feito várias compras em dias diferentes, o mesmo `ID_Cliente` aparecerá repetido em várias linhas. Para saber se o cliente cancelou/evadiu (Churn), a equipe precisa olhar para a <strong>data de compra mais recente</strong> desse cliente!</li>
+          <li><strong>ID de Transação/Pedido/Chamado (Casos 2, 3, 5, 6, 7):</strong> Cada linha representa um <u>evento único</u> (um frete, um atendimento ou uma venda). IDs exatamente iguais com todas as informações idênticas são duplicidades de digitação que devem ser excluídas.</li>
+          <li><strong>SKU (Caso 4):</strong> É o <u>código do produto</u> em estoque. Cuidado com códigos iguais que possuem espaços invisíveis antes ou depois do texto!</li>
+        </ul>
       </div>
 
       <div style="background:#e8f0fe; border-left:4px solid var(--primary); padding:12px 15px; border-radius:6px; font-size:0.9rem; margin-bottom:20px;">
@@ -504,13 +526,13 @@
         titulo: "Caso 1: Retenção de Clientes (Churn E-Commerce)",
         desc: "Análise de evasão de clientes em uma loja virtual com 115 transações contendo erros de datas e valores.",
         sujeiras: [
-          "IDs de Clientes duplicados em 115 linhas com dados divergentes.",
+          "IDs de Clientes (CLI-xxx) duplicados em 115 linhas (pois o mesmo cliente comprou mais de uma vez).",
           "Datas de compra em formatos texto variados (DD/MM/AAAA, AAAA-MM-DD e MM/DD/AA).",
           "Faturamento formatado como texto ('R$ 150,00' inviabilizando cálculos).",
           "Campos vazios no 'Status de Cancelamento'."
         ],
         formulas: [
-          "<b>PROCV / XLOOKUP:</b> Cruzar cadastro de clientes com compras pelo ID.",
+          "<b>PROCV / XLOOKUP:</b> Cruzar cadastro de clientes com compras pelo ID_Cliente.",
           "<b>DIAS:</b> Calcular tempo sem comprar: <span class='formula-badge'>=HOJE() - Data_Ultima_Compra</span>.",
           "<b>SE (IF):</b> Classificar Churn: <span class='formula-badge'>=SE(Dias_Inativo > 90; 'Churn'; 'Ativo')</span>.",
           "<b>Taxa de Churn (%):</b> <span class='formula-badge'>=(Clientes Churn / Total Clientes) * 100</span>."
@@ -609,7 +631,7 @@
           "<b>CONT.SE:</b> Quantificar chamados por tipo de reclamação."
         ],
         perguntas: [
-          "1. Qual foi o Tempo Médio de Atendimento (TMA) geral calculado para a central?",
+          "1. Qual foi o Tempo Médio de Atendimento (TMA) geral calculated para a central?",
           "2. Qual a principal categoria de reclamação/chamado que sobrecarrega a equipe de SAC?",
           "3. Quais falhas e dados ausentes foram corrigidos no histórico de atendimentos?",
           "4. Qual foi o percentual de solução no primeiro contato (First Contact Resolution - FCR)?",
@@ -1058,7 +1080,7 @@
             </div>
 
             <details style="font-size:0.85rem; background:#e8f0fe; padding:10px; border-radius:6px; margin-bottom:10px;">
-              <summary style="font-weight:bold; cursor:pointer; color:var(--primary);">👁️ Ver Respostas das 5 Questões Analíticas</summary>
+              <summary style="font-weight:bold; cursor:pointer; color:var(--primary);">👁️️ Ver Respostas das 5 Questões Analíticas</summary>
               <div style="margin-top:10px; color:#333; line-height:1.4;">
                 <p><strong>Q1:</strong> ${g.respostaQ1 || "<i>Sem resposta</i>"}</p>
                 <p style="margin-top:6px;"><strong>Q2:</strong> ${g.respostaQ2 || "<i>Sem resposta</i>"}</p>
