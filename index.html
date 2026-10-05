@@ -112,7 +112,7 @@
 
     .form-group { margin-bottom: 18px; }
     label { display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px; color: #333; }
-    input[type="text"], input[type="url"], select, textarea {
+    input[type="text"], input[type="url"], textarea {
       width: 100%;
       padding: 12px;
       border: 1px solid var(--border);
@@ -122,7 +122,7 @@
       font-family: inherit;
     }
     textarea { resize: vertical; min-height: 80px; }
-    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+    input:focus, textarea:focus { border-color: var(--primary); }
 
     .btn {
       display: inline-block;
@@ -285,8 +285,7 @@
       width: 100%;
       margin-top: 12px;
     }
-    .btn-select:hover:not(:disabled) { background: var(--primary); color: white; }
-    .btn-select:disabled { cursor: not-allowed; opacity: 0.8; }
+    .btn-select:hover { background: var(--primary); color: white; }
 
     .formula-badge {
       background: #e8f0fe;
@@ -416,22 +415,12 @@
       </div>
 
       <h2>1. Cadastro e Edição da Equipe de Analistas</h2>
-      <p class="description">Digite o nome da equipe, selecione o turno e informe o <strong>Nome + Sobrenome completo</strong> de todos os componentes.</p>
+      <p class="description">Digite o nome da equipe e o <strong>Nome + Sobrenome completo</strong> de todos os componentes (Critério de Avaliação).</p>
 
       <form id="form-cadastro">
         <div class="form-group">
           <label for="nomeGrupo">NOME DO GRUPO / CONSULTORIA *</label>
           <input type="text" id="nomeGrupo" placeholder="Ex: Grupo Alpha Data" required>
-        </div>
-
-        <div class="form-group">
-          <label for="turnoGrupo">TURNO *</label>
-          <select id="turnoGrupo" required>
-            <option value="">-- Selecione o Turno --</option>
-            <option value="Matutino">Matutino</option>
-            <option value="Vespertino">Vespertino</option>
-            <option value="Noturno">Noturno</option>
-          </select>
         </div>
 
         <label style="margin-top: 15px; display:block;">Integrantes (Obrigatório informar Nome e Sobrenome):</label>
@@ -463,7 +452,7 @@
           <div class="guia-num">1</div>
           <div class="guia-info">
             <h4>Escolha um Caso Prático</h4>
-            <p>No próximo passo, escolha 1 dos 7 casos de negócios. Cada caso pode ser escolhido por apenas 1 grupo no turno.</p>
+            <p>No próximo passo, escolha 1 dos 7 casos de negócios. Cada caso representa um desafio de mercado real.</p>
           </div>
         </div>
 
@@ -564,14 +553,14 @@
       </div>
 
       <h2>3. Seleção do Desafio de Negócio</h2>
-      <p class="description">Cada grupo pode escolher apenas <strong>1 projeto exclusivo</strong> por turno. Escolham 1 dos casos disponíveis abaixo:</p>
+      <p class="description">Escolham 1 dos 7 casos reais abaixo. Cada caso possui uma base bruta de +110 linhas e 5 perguntas específicas.</p>
       <div id="casesContainer" class="cases-grid">Carregando projetos e equipes alocadas...</div>
     </div>
 
     <!-- PASSO 4: EXECUÇÃO, DADOS E 5 QUESTÕES ANALÍTICAS -->
     <div id="step-4" class="card step-content">
       <div class="nav-buttons-bar">
-        <button onclick="window.goToStep(3)" class="btn-nav">← Voltar para Seleção de Caso</button>
+        <button onclick="window.goToStep(3)" class="btn-nav">← Voltar e Trocar de Caso</button>
         <button onclick="window.abrirModalAnalisador()" class="btn-nav" style="background:#f3e8ff; border-color:#9333ea; color:#6b21a8;">🔍 Auditor / Analisador de Planilha</button>
       </div>
 
@@ -835,7 +824,7 @@
           "<b>CONT.SE:</b> Quantificar chamados por tipo de reclamação."
         ],
         perguntas: [
-          "1. Qual foi o Tempo Médio de Atendimento (TMA) geral calculated para a central?",
+          "1. Qual foi o Tempo Médio de Atendimento (TMA) geral calculado para a central?",
           "2. Qual a principal categoria de reclamação/chamado que sobrecarrega a equipe de SAC?",
           "3. Quais falhas e dados ausentes foram corrigidos no histórico de atendimentos?",
           "4. Qual foi o percentual de solução no primeiro contato (First Contact Resolution - FCR)?",
@@ -899,4 +888,759 @@
         for (let i = 1; i <= 115; i++) {
           let id = "CLI-" + (100 + (i % 75));
           let nome = nomes[i % nomes.length];
-          let data = (i % 3 === 0) ? `${(i\%28)+1}/0${(i%9)+1}/2026` : ((i % 3 === 1) ? `2026-0${(i\%9)+1}-${
+          let data = (i % 3 === 0) ? `${(i%28)+1}/0${(i%9)+1}/2026` : ((i % 3 === 1) ? `2026-0${(i%9)+1}-${(i%28)+1}` : `0${(i%9)+1}/${(i%28)+1}/26`);
+          let valor = (i % 5 === 0) ? `R$ ${(i * 25.5).toFixed(2).replace('.', ',')}` : ((i % 5 === 1) ? `${(i * 30.1).toFixed(2)}` : ((i % 5 === 2) ? " - " : `R$ ${(i * 18.0).toFixed(2)}`));
+          let cat = categorias[i % categorias.length];
+          let status = (i % 4 === 0) ? "Sim" : ((i % 4 === 1) ? "Não" : ((i % 4 === 2) ? "CANCELADO" : ""));
+          rows.push([id, nome, data, valor, cat, status]);
+        }
+      } else if (casoId === 2) {
+        rows.push(["ID_Pedido", "Cidade_Destino", "CEP", "Data_Despacho", "Data_Prometida", "Data_Entrega", "Peso", "Custo_Frete", "Transportadora"]);
+        const cidades = ["São Paulo", "Sao Paulo", "S. Paulo", "Curitiba", "Cwb", "Rio de Janeiro", "R. Janeiro", "Belo Horizonte", "BH", "Porto Alegre"];
+        const trans = ["TransFast", "FastLog", "LogBrasil", "ExpressRápido"];
+        for (let i = 1; i <= 120; i++) {
+          let id = "PED-" + (2000 + i);
+          let cid = cidades[i % cidades.length];
+          let cep = (i % 2 === 0) ? `0${13000 + i}-000` : `${13000 + i}`;
+          let dDesp = `2026-03-${String((i % 20) + 1).padStart(2, '0')}`;
+          let dProm = `2026-03-${String((i % 20) + 5).padStart(2, '0')}`;
+          let dEnt = (i % 7 === 0) ? `2026-03-${String((i % 20)).padStart(2, '0')}` : `2026-03-${String((i % 20) + 4).padStart(2, '0')}`;
+          let peso = (i % 3 === 0) ? `${(i * 0.5).toFixed(1)}kg` : ((i % 3 === 1) ? `${i * 500}g` : `${(i * 0.5).toFixed(1)}`);
+          let custo = `R$ ${(i * 12.4).toFixed(2).replace('.', ',')}`;
+          let tr = trans[i % trans.length];
+          rows.push([id, cid, cep, dDesp, dProm, dEnt, peso, custo, tr]);
+        }
+      } else if (casoId === 3) {
+        rows.push(["ID_Venda", "Data_Venda", "SKU_Produto", "Nome_Produto", "Qtd_Vendida", "Preco_Unitario", "Canal_Venda"]);
+        const prods = [["SKU-001", "Smartphone X"], ["SKU-001", "Smartphone X10"], ["SKU-002", "Notebook Pro"], ["SKU-003", "Monitor 24pol"], ["SKU-004", "Teclado Mecanico"], ["SKU-005", "Mouse Sem Fio"]];
+        for (let i = 1; i <= 110; i++) {
+          let id = "VND-" + (5000 + i);
+          let data = `2026-02-${String((i % 28) + 1).padStart(2, '0')}`;
+          let prod = prods[i % prods.length];
+          let qtd = (i === 15) ? 99999 : ((i === 42) ? -10 : (i % 12) + 1);
+          let preco = (i % 4 === 0) ? "1500,00" : `${(100 + i * 15).toFixed(2)}`;
+          let canal = (i % 2 === 0) ? "Site" : "Loja Física";
+          rows.push([id, data, prod[0], prod[1], qtd, preco, canal]);
+        }
+      } else if (casoId === 4) {
+        rows.push(["SKU", "Descricao_Item", "Categoria", "Qtd_Estoque", "Custo_Unitario", "Unidade_Medida"]);
+        const cats = ["Parafusos", "Ferramentas", "Elétrica", "Pintura", "Hidráulica"];
+        const unids = ["CX", "CAIXA", "UN", "UNIDADE", "PÇ", "KG", "LTR"];
+        for (let i = 1; i <= 125; i++) {
+          let sku = (i % 3 === 0) ? ` SKU-10${i} ` : `SKU-10${i}`;
+          let desc = `Item Industrial Tipo ${i}`;
+          let cat = cats[i % cats.length];
+          let qtd = (i % 8 === 0) ? 0 : (i * 3) % 150;
+          let custo = (i % 10 === 0) ? "-15.00" : ((i % 7 === 0) ? "0,00" : `R$ ${(i * 4.2).toFixed(2).replace('.', ',')}`);
+          let un = unids[i % unids.length];
+          rows.push([sku, desc, cat, qtd, custo, un]);
+        }
+      } else if (casoId === 5) {
+        rows.push(["ID_Chamado", "Cliente", "Data_Abertura", "Hora_Abertura", "Data_Fechamento", "Hora_Fechamento", "Categoria_Problema", "Resolvido_1_Contato"]);
+        const cats = ["Dúvida", "DUVIDAS", "Erro de Login", "Login", "Financeiro", "FINANCEIRO", "Troca", "Reclamação"];
+        for (let i = 1; i <= 130; i++) {
+          let id = "SAC-" + (8000 + i);
+          let cli = `Cliente ${i}`;
+          let dAber = `2026-03-${String((i % 25) + 1).padStart(2, '0')}`;
+          let hAber = `${String((i % 10) + 8).padStart(2, '0')}:${String((i * 7) % 60).padStart(2, '0')}`;
+          let dFech = (i % 6 === 0) ? "" : `2026-03-${String((i % 25) + 1).padStart(2, '0')}`;
+          let hFech = (i % 6 === 0) ? "" : `${String((i % 10) + 9).padStart(2, '0')}:${String((i * 11) % 60).padStart(2, '0')}`;
+          let cat = cats[i % cats.length];
+          let res = (i % 2 === 0) ? "Sim" : "Não";
+          rows.push([id, cli, dAber, hAber, dFech, hFech, cat, res]);
+        }
+      } else if (casoId === 6) {
+        rows.push(["ID_Titulo", "Cliente_CNPJ", "Valor_Titulo", "Data_Vencimento", "Data_Pagamento", "Status_Pagamento", "Regiao"]);
+        const regiões = ["SUL", "Sul", "SUDESTE", "Sudeste", "NORTE", "Norte"];
+        const statusList = ["Pago", "PG", "PAGO_OK", "Em Aberto", "Atrasado"];
+        for (let i = 1; i <= 120; i++) {
+          let id = "TIT-" + (3000 + i);
+          let cnpj = (i % 2 === 0) ? `12.345.${100+i}/0001-90` : `12345${100+i}000190`;
+          let valor = (i % 3 === 0) ? `1.250,50` : ((i % 3 === 1) ? `1250.50` : `R$ ${(i * 85.0).toFixed(2)}`);
+          let dVenc = `2026-02-${String((i % 28) + 1).padStart(2, '0')}`;
+          let dPag = (i % 4 === 0) ? "" : `2026-03-${String((i % 15) + 1).padStart(2, '0')}`;
+          let st = statusList[i % statusList.length];
+          let reg = regiões[i % regiões.length];
+          rows.push([id, cnpj, valor, dVenc, dPag, st, reg]);
+        }
+      } else if (casoId === 7) {
+        rows.push(["ID_Venda", "Vendedor", "Regiao", "Valor_Venda", "Meta_Vendedor", "Data_Venda"]);
+        const vendedors = [["João Silva", "Joao Silva"], ["J. Silva", "João Silva"], ["Maria Santos", "M. Santos"], ["Pedro Costa", "P. Costa"], ["Ana Lima", "A. Lima"]];
+        for (let i = 1; i <= 115; i++) {
+          let id = "VND-R" + (i % 90 + 1);
+          let vendPair = vendedors[i % vendedors.length];
+          let vend = vendPair[i % 2];
+          let reg = (i % 2 === 0) ? "Sul" : "Sudeste";
+          let val = `R$ ${(i * 120.50).toFixed(2).replace('.', ',')}`;
+          let meta = "R$ 10.000,00";
+          let data = `2026-03-${String((i % 25) + 1).padStart(2, '0')}`;
+          rows.push([id, vend, reg, val, meta, data]);
+        }
+      }
+      return rows;
+    }
+
+    let currentDocId = sessionStorage.getItem("tgdq_docId") || null;
+    let currentGrupoData = JSON.parse(sessionStorage.getItem("tgdq_grupoData")) || null;
+    let unsubscribeCasosListener = null;
+
+    // VALIDADOR DE NOME COMPLETO (NOME E SOBRENOME)
+    function eNomeSobrenomeCompleto(nome) {
+      if (!nome) return false;
+      const partes = nome.trim().split(/\s+/);
+      return partes.length >= 2 && partes[0].length >= 2 && partes[1].length >= 2;
+    }
+
+    // AVALIADOR AUTOMÁTICO DE NOTAS (0.0 A 10.0) COM RUBRICA
+    function calcularNotaGrupo(g) {
+      let nota = 0.0;
+      let rubrica = [];
+
+      const comp = g.componentes || [];
+      let nomesValidos = 0;
+      comp.forEach(n => {
+        if (eNomeSobrenomeCompleto(n)) nomesValidos++;
+      });
+      if (comp.length > 0 && nomesValidos === comp.length) {
+        nota += 2.0;
+        rubrica.push("✅ Integrantes (Nome + Sobrenome completos): +2,0 pts");
+      } else {
+        const desc = comp.length === 0 ? "Nenhum integrante" : `Apenas ${nomesValidos} de ${comp.length} com sobrenome`;
+        rubrica.push(`⚠️ Integrantes Incompletos (${desc}): 0,0 / 2,0 pts`);
+      }
+
+      if (g.casoId) {
+        nota += 1.0;
+        rubrica.push("✅ Escolha de Caso Prático: +1,0 pt");
+      } else {
+        rubrica.push("❌ Caso de Negócio Não Selecionado: 0,0 / 1,0 pt");
+      }
+
+      const respostas = [g.respostaQ1, g.respostaQ2, g.respostaQ3, g.respostaQ4, g.respostaQ5];
+      let ptsRespostas = 0;
+      respostas.forEach((r) => {
+        if (r && r.trim().length >= 40) {
+          ptsRespostas += 0.8;
+        } else if (r && r.trim().length > 10) {
+          ptsRespostas += 0.4;
+        }
+      });
+      nota += ptsRespostas;
+      rubrica.push(`📝 5 Respostas Analíticas (${ptsRespostas.toFixed(1)} / 4,0 pts)`);
+
+      if (g.linkDia1 && g.linkDia1.trim().startsWith("http")) {
+        nota += 1.5;
+        rubrica.push("✅ Link da Planilha Tratada (Dia 1): +1,5 pts");
+      } else {
+        rubrica.push("❌ Link da Planilha Tratada Pendente: 0,0 / 1,5 pts");
+      }
+
+      if (g.linkDia2 && g.linkDia2.trim().startsWith("http")) {
+        nota += 1.5;
+        rubrica.push("✅ Link do Dashboard (Dia 2): +1,5 pts");
+      } else {
+        rubrica.push("❌ Link do Dashboard Pendente: 0,0 / 1,5 pts");
+      }
+
+      return {
+        notaNum: nota.toFixed(1),
+        rubricaHtml: rubrica.map(item => `<li>${item}</li>`).join("")
+      };
+    }
+
+    // NAVEGAÇÃO ENTRE PASSOS E PREENCHIMENTO AUTOMÁTICO DE EDIÇÃO
+    window.goToStep = function(stepNumber) {
+      document.querySelectorAll(".step-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".step").forEach((el, index) => {
+        el.classList.remove("active");
+        if (index + 1 < stepNumber) {
+          el.classList.add("completed");
+        } else {
+          el.classList.remove("completed");
+        }
+      });
+
+      document.getElementById(`step-${stepNumber}`).classList.add("active");
+      document.getElementById(`st-${stepNumber}`).classList.add("active");
+      
+      if (stepNumber === 1 && currentGrupoData) {
+        const banner = document.getElementById("sessionBanner");
+        document.getElementById("sessionBannerText").innerText = `✅ Sua equipe "${currentGrupoData.nomeGrupo}" está aberta para edição de nomes.`;
+        banner.style.display = "flex";
+
+        document.getElementById("nomeGrupo").value = currentGrupoData.nomeGrupo || "";
+        if (currentGrupoData.componentes && Array.isArray(currentGrupoData.componentes)) {
+          for (let i = 0; i < 5; i++) {
+            const elInput = document.getElementById(`aluno${i+1}`);
+            if (elInput) {
+              elInput.value = currentGrupoData.componentes[i] || "";
+            }
+          }
+        }
+      }
+
+      if (stepNumber === 3) {
+        renderizarCasosComEquipes();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    function renderizarCasosComEquipes() {
+      if (unsubscribeCasosListener) {
+        unsubscribeCasosListener();
+      }
+
+      const q = query(collection(db, "grupos"));
+      unsubscribeCasosListener = onSnapshot(q, (snapshot) => {
+        const gruposPorCaso = {};
+        
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          if (data.casoId) {
+            if (!gruposPorCaso[data.casoId]) {
+              gruposPorCaso[data.casoId] = [];
+            }
+            gruposPorCaso[data.casoId].push(data.nomeGrupo);
+          }
+        });
+
+        const container = document.getElementById("casesContainer");
+        container.innerHTML = "";
+
+        LISTA_CASOS.forEach(caso => {
+          const equipesDoCaso = gruposPorCaso[caso.id] || [];
+          let equipesHtml = "";
+
+          if (equipesDoCaso.length > 0) {
+            equipesHtml = `
+              <div class="equipes-alocadas-box tem-grupo">
+                <strong>👥 Equipes neste caso (${equipesDoCaso.length}):</strong><br>
+                ${equipesDoCaso.map(e => `• <b>${e}</b>`).join("<br>")}
+              </div>
+            `;
+          } else {
+            equipesHtml = `
+              <div class="equipes-alocadas-box sem-grupo">
+                <i>Nenhuma equipe escolheu este caso ainda.</i>
+              </div>
+            `;
+          }
+
+          const card = document.createElement("div");
+          card.className = "case-card";
+          card.innerHTML = `
+            <div>
+              <h3>${caso.titulo}</h3>
+              <p>${caso.desc}</p>
+              ${equipesHtml}
+            </div>
+            <button class="btn-select" onclick="selecionarCaso(${caso.id})">Selecionar Este Caso</button>
+          `;
+          container.appendChild(card);
+        });
+      });
+    }
+
+    document.getElementById("form-cadastro").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnCadastrar");
+      btn.disabled = true;
+      btn.innerText = "Verificando dados e salvando...";
+
+      const nomeGrupoInput = document.getElementById("nomeGrupo").value.trim();
+      const camposAlunos = [
+        document.getElementById("aluno1").value.trim(),
+        document.getElementById("aluno2").value.trim(),
+        document.getElementById("aluno3").value.trim(),
+        document.getElementById("aluno4").value.trim(),
+        document.getElementById("aluno5").value.trim()
+      ].filter(n => n !== "");
+
+      for (let i = 0; i < camposAlunos.length; i++) {
+        if (!eNomeSobrenomeCompleto(camposAlunos[i])) {
+          alert(`⚠️ O integrante "${camposAlunos[i]}" precisa ter NOME e SOBRENOME completos!`);
+          btn.disabled = false;
+          btn.innerText = "Salvar Equipe e Avançar →";
+          return;
+        }
+      }
+
+      try {
+        const snapshotGrupos = await getDocs(collection(db, "grupos"));
+        let nomeGrupoDuplicado = false;
+        let alunoDuplicadoNome = null;
+
+        snapshotGrupos.forEach(docSnap => {
+          if (docSnap.id !== currentDocId) {
+            const dataDoc = docSnap.data();
+
+            if (dataDoc.nomeGrupo && dataDoc.nomeGrupo.trim().toLowerCase() === nomeGrupoInput.toLowerCase()) {
+              nomeGrupoDuplicado = true;
+            }
+
+            if (dataDoc.componentes && Array.isArray(dataDoc.componentes)) {
+              camposAlunos.forEach(alunoForm => {
+                dataDoc.componentes.forEach(alunoExistente => {
+                  if (alunoExistente.trim().toLowerCase() === alunoForm.toLowerCase()) {
+                    alunoDuplicadoNome = alunoForm;
+                  }
+                });
+              });
+            }
+          }
+        });
+
+        if (nomeGrupoDuplicado) {
+          alert(`⚠️ Já existe um grupo cadastrado com o nome "${nomeGrupoInput}". Escolha outro nome para a sua equipe!`);
+          btn.disabled = false;
+          btn.innerText = "Salvar Equipe e Avançar →";
+          return;
+        }
+
+        if (alunoDuplicadoNome) {
+          alert(`⚠️ O aluno "${alunoDuplicadoNome}" já está cadastrado em outra equipe! Os alunos não podem repetir em grupos diferentes.`);
+          btn.disabled = false;
+          btn.innerText = "Salvar Equipe e Avançar →";
+          return;
+        }
+
+        const novoGrupo = {
+          nomeGrupo: nomeGrupoInput,
+          componentes: camposAlunos,
+          casoId: currentGrupoData ? currentGrupoData.casoId || null : null,
+          casoTitulo: currentGrupoData ? currentGrupoData.casoTitulo || "" : "",
+          linkDia1: currentGrupoData ? currentGrupoData.linkDia1 || "" : "",
+          linkDia2: currentGrupoData ? currentGrupoData.linkDia2 || "" : "",
+          respostaQ1: currentGrupoData ? currentGrupoData.respostaQ1 || "" : "",
+          respostaQ2: currentGrupoData ? currentGrupoData.respostaQ2 || "" : "",
+          respostaQ3: currentGrupoData ? currentGrupoData.respostaQ3 || "" : "",
+          respostaQ4: currentGrupoData ? currentGrupoData.respostaQ4 || "" : "",
+          respostaQ5: currentGrupoData ? currentGrupoData.respostaQ5 || "" : "",
+          dataEnvio: serverTimestamp()
+        };
+
+        if (!currentDocId) {
+          const docRef = await addDoc(collection(db, "grupos"), novoGrupo);
+          currentDocId = docRef.id;
+        } else {
+          const groupRef = doc(db, "grupos", currentDocId);
+          await updateDoc(groupRef, {
+            nomeGrupo: novoGrupo.nomeGrupo,
+            componentes: camposAlunos
+          });
+        }
+        
+        currentGrupoData = { ...currentGrupoData, ...novoGrupo };
+        sessionStorage.setItem("tgdq_docId", currentDocId);
+        sessionStorage.setItem("tgdq_grupoData", JSON.stringify(currentGrupoData));
+
+        window.goToStep(2);
+      } catch (err) {
+        alert("Erro ao validar e salvar equipe no servidor.");
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Salvar Equipe e Avançar →";
+      }
+    });
+
+    document.getElementById("btnIrParaCasos").addEventListener("click", () => {
+      window.goToStep(3);
+    });
+
+    window.selecionarCaso = async function(casoId) {
+      if (!currentDocId) {
+        alert("Cadastre sua equipe primeiro no Passo 1!");
+        window.goToStep(1);
+        return;
+      }
+
+      const caso = LISTA_CASOS.find(c => c.id === casoId);
+      
+      try {
+        const groupRef = doc(db, "grupos", currentDocId);
+        await updateDoc(groupRef, {
+          casoId: caso.id,
+          casoTitulo: caso.titulo
+        });
+
+        currentGrupoData.casoId = caso.id;
+        currentGrupoData.casoTitulo = caso.titulo;
+        sessionStorage.setItem("tgdq_grupoData", JSON.stringify(currentGrupoData));
+
+        prepararPasso4(caso);
+        window.goToStep(4);
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao selecionar caso.");
+      }
+    };
+
+    function prepararPasso4(caso) {
+      document.getElementById("infoGrupoEleito").innerHTML = `
+        <strong>Equipe:</strong> ${currentGrupoData.nomeGrupo} | <strong>Componentes:</strong> ${currentGrupoData.componentes.join(", ")}
+      `;
+      document.getElementById("displayCasoTitulo").innerText = caso.titulo;
+      document.getElementById("displayCasoDesc").innerText = caso.desc;
+
+      document.getElementById("listSujeiras").innerHTML = caso.sujeiras.map(s => `<li>${s}</li>`).join("");
+      document.getElementById("listFormulas").innerHTML = caso.formulas.map(f => `<li>${f}</li>`).join("");
+
+      const containerP = document.getElementById("containerPerguntas");
+      containerP.innerHTML = "";
+      caso.perguntas.forEach((pText, idx) => {
+        const qNum = idx + 1;
+        const divGroup = document.createElement("div");
+        divGroup.className = "form-group";
+        const valAnterior = currentGrupoData[`respostaQ${qNum}`] || "";
+        divGroup.innerHTML = `
+          <label for="q${qNum}">${pText}</label>
+          <textarea id="q${qNum}" placeholder="Escreva a resposta fundamentada da sua equipe..." required>${valAnterior}</textarea>
+        `;
+        containerP.appendChild(divGroup);
+      });
+
+      if (currentGrupoData.linkDia1) document.getElementById("linkDia1").value = currentGrupoData.linkDia1;
+      if (currentGrupoData.linkDia2) document.getElementById("linkDia2").value = currentGrupoData.linkDia2;
+    }
+
+    // DOWNLOAD E VISUALIZAÇÃO DE TABELA DO ALUNO
+    window.baixarCSV = function() {
+      if (!currentGrupoData || !currentGrupoData.casoId) return;
+      executarDownloadCSV(currentGrupoData.casoId);
+    };
+
+    window.abrirModalDados = function() {
+      if (!currentGrupoData || !currentGrupoData.casoId) return;
+      exibirModalTabela(currentGrupoData.casoId);
+    };
+
+    // DOWNLOAD E VISUALIZAÇÃO DE TABELA PARA O PROFESSOR (SEM DEPENDER DE GRUPO)
+    function executarDownloadCSV(casoId) {
+      const rows = gerarLinhasSujasCaso(casoId);
+      let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + rows.map(e => e.map(cell => `"${cell}"`).join(";")).join("\n");
+      let encodedUri = encodeURI(csvContent);
+      let link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Base_Suja_Caso_${casoId}_110Linhas.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exibirModalTabela(casoId) {
+      const rows = gerarLinhasSujasCaso(casoId);
+      const tabela = document.getElementById("tabelaDados");
+      tabela.innerHTML = "";
+
+      document.getElementById("tituloModalDados").innerText = `Base Bruta do Caso ${casoId} (+110 Linhas)`;
+      document.getElementById("btnCopiarModalGeral").onclick = function() {
+        let text = rows.map(r => r.join("\t")).join("\n");
+        navigator.clipboard.writeText(text).then(() => {
+          alert("✅ Tabela inteira (+110 linhas) copiada para a área de transferência!");
+        });
+      };
+
+      rows.forEach((row, idx) => {
+        let tr = document.createElement("tr");
+        row.forEach(cell => {
+          let el = idx === 0 ? document.createElement("th") : document.createElement("td");
+          el.innerText = cell;
+          tr.appendChild(el);
+        });
+        tabela.appendChild(tr);
+      });
+
+      document.getElementById("modalDados").style.display = "flex";
+    }
+
+    window.copiarTabelaExcel = function() {
+      if (!currentGrupoData || !currentGrupoData.casoId) return;
+      const rows = gerarLinhasSujasCaso(currentGrupoData.casoId);
+      let text = rows.map(r => r.join("\t")).join("\n");
+      navigator.clipboard.writeText(text).then(() => {
+        alert("✅ Tabela inteira (+110 linhas) copiada! Abra o Excel ou Google Sheets e pressione Ctrl + V.");
+      });
+    };
+
+    // AUDITOR E ANALISADOR DE DADOS DA PLANILHA
+    window.abrirModalAnalisador = function() {
+      document.getElementById("modalAnalisador").style.display = "flex";
+    };
+
+    window.executarAuditoriaPlanilha = function() {
+      const textInput = document.getElementById("tsvDataInput").value.trim();
+      const divRes = document.getElementById("resultadoAuditoria");
+
+      if (!textInput) {
+        alert("Cole os dados da sua planilha no campo de texto para executar a análise!");
+        return;
+      }
+
+      const linhas = textInput.split("\n").filter(l => l.trim() !== "");
+      if (linhas.length < 2) {
+        alert("Quantidade insuficiente de linhas. Cole a tabela completa do seu Excel.");
+        return;
+      }
+
+      let totalLinhas = linhas.length - 1;
+      let celulasVazias = 0;
+      let errosFormula = 0;
+      let colunasCount = linhas[0].split("\t").length;
+
+      linhas.forEach((rowStr, rIdx) => {
+        if (rIdx === 0) return;
+        const celulas = rowStr.split("\t");
+        celulas.forEach(c => {
+          const val = c.trim().toUpperCase();
+          if (val === "" || val === "NULL" || val === "-" || val === "VAZIO") celulasVazias++;
+          if (val.includes("#N/A") || val.includes("#VALOR!") || val.includes("DIV/0!")) errosFormula++;
+        });
+      });
+
+      let statusDQ = (celulasVazias === 0 && errosFormula === 0) 
+        ? `<strong style="color:#137333;">🟢 APROVADA NA AUDITORIA DE DATA QUALITY!</strong>`
+        : `<strong style="color:#c5221f;">🔴 REPROVADA NA AUDITORIA! Foram encontrados erros ou células em branco.</strong>`;
+
+      divRes.innerHTML = `
+        <h4>📊 Diagnóstico do Analisador de Planilha:</h4>
+        <p style="margin-top:6px;">• <strong>Total de Registros Analisados:</strong> ${totalLinhas} linhas | ${colunasCount} colunas</p>
+        <p>• <strong>Células Vazias / Sem Tratamento:</strong> <span style="font-weight:bold; color:${celulasVazias === 0 ? '#137333' : '#c5221f'};">${celulasVazias}</span></p>
+        <p>• <strong>Erros de Fórmulas (#N/A, #VALOR!):</strong> <span style="font-weight:bold; color:${errosFormula === 0 ? '#137333' : '#c5221f'};">${errosFormula}</span></p>
+        <div style="margin-top:12px; padding:10px; background:#fff; border-radius:6px; border:1px solid #ddd;">
+          ${statusDQ}
+        </div>
+      `;
+      divRes.style.display = "block";
+    };
+
+    document.getElementById("form-entregas").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnSalvarEntregas");
+      btn.disabled = true;
+      btn.innerText = "Gravando Respostas no Servidor...";
+
+      const l1 = document.getElementById("linkDia1").value.trim();
+      const l2 = document.getElementById("linkDia2").value.trim();
+
+      const q1 = document.getElementById("q1") ? document.getElementById("q1").value.trim() : "";
+      const q2 = document.getElementById("q2") ? document.getElementById("q2").value.trim() : "";
+      const q3 = document.getElementById("q3") ? document.getElementById("q3").value.trim() : "";
+      const q4 = document.getElementById("q4") ? document.getElementById("q4").value.trim() : "";
+      const q5 = document.getElementById("q5") ? document.getElementById("q5").value.trim() : "";
+
+      try {
+        const groupRef = doc(db, "grupos", currentDocId);
+        await updateDoc(groupRef, {
+          linkDia1: l1,
+          linkDia2: l2,
+          respostaQ1: q1,
+          respostaQ2: q2,
+          respostaQ3: q3,
+          respostaQ4: q4,
+          respostaQ5: q5,
+          ultimaAtualizacao: serverTimestamp()
+        });
+
+        currentGrupoData.linkDia1 = l1;
+        currentGrupoData.linkDia2 = l2;
+        currentGrupoData.respostaQ1 = q1;
+        currentGrupoData.respostaQ2 = q2;
+        currentGrupoData.respostaQ3 = q3;
+        currentGrupoData.respostaQ4 = q4;
+        currentGrupoData.respostaQ5 = q5;
+
+        sessionStorage.setItem("tgdq_grupoData", JSON.stringify(currentGrupoData));
+
+        const alertEl = document.getElementById("alertSuccess");
+        alertEl.innerText = "✅ Respostas analíticas e links salvos com sucesso no sistema do professor!";
+        alertEl.style.display = "block";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao salvar entregas.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Enviar Respostas e Links do Grupo";
+      }
+    });
+
+    // MÓDULO DO PROFESSOR COM VISUALIZADOR DE CASOS
+    const btnToggleProfTop = document.getElementById("btnToggleProfTop");
+    const profPanel = document.getElementById("profPanel");
+    const btnFecharAdmin = document.getElementById("btnFecharAdmin");
+    let isAuthed = false;
+
+    function abrirPainelProfessor() {
+      if (!isAuthed) {
+        const pwd = prompt("Digite a senha do professor:");
+        if (pwd === "1234") {
+          isAuthed = true;
+          profPanel.style.display = "block";
+          inicializarVisualizadorCasosProf();
+          carregarDashboardAdmin();
+          window.scrollTo({ top: profPanel.offsetTop, behavior: 'smooth' });
+        } else if (pwd !== null) {
+          alert("Senha incorreta!");
+        }
+      } else {
+        profPanel.style.display = profPanel.style.display === "none" ? "block" : "none";
+        if (profPanel.style.display === "block") {
+          window.scrollTo({ top: profPanel.offsetTop, behavior: 'smooth' });
+        }
+      }
+    }
+
+    btnToggleProfTop.addEventListener("click", abrirPainelProfessor);
+    btnFecharAdmin.addEventListener("click", () => { profPanel.style.display = "none"; });
+
+    function inicializarVisualizadorCasosProf() {
+      const select = document.getElementById("selectCasoProf");
+      if (select.children.length > 1) return; // Já populado
+
+      LISTA_CASOS.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.innerText = c.titulo;
+        select.appendChild(opt);
+      });
+
+      select.addEventListener("change", (e) => {
+        const casoId = parseInt(e.target.value);
+        const container = document.getElementById("containerDetalhesCasoProf");
+        
+        if (!casoId) {
+          container.style.display = "none";
+          return;
+        }
+
+        const caso = LISTA_CASOS.find(item => item.id === casoId);
+        container.innerHTML = `
+          <h4 style="color:var(--primary); font-size:1.1rem; margin-bottom:6px;">${caso.titulo}</h4>
+          <p style="font-size:0.9rem; color:#555; margin-bottom:12px;">${caso.desc}</p>
+          
+          <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+            <button id="btnProfCSV" class="btn btn-green" style="padding:8px 14px; font-size:0.85rem; width:auto;">📥 Baixar CSV da Base Bruta</button>
+            <button id="btnProfTabela" class="btn" style="padding:8px 14px; font-size:0.85rem; width:auto; background:#5f6368;">📋 Copiar / Visualizar Tabela</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:15px; font-size:0.85rem;">
+            <div style="background:#f8f9fa; padding:12px; border-radius:6px; border:1px solid #ddd;">
+              <strong style="color:var(--primary);">🧹 Inconsistências (Erros a Limpar):</strong>
+              <ul style="margin-left:18px; margin-top:6px; color:#444;">
+                ${caso.sujeiras.map(s => `<li>${s}</li>`).join("")}
+              </ul>
+            </div>
+
+            <div style="background:#f8f9fa; padding:12px; border-radius:6px; border:1px solid #ddd;">
+              <strong style="color:var(--primary);">📐 Guia de Fórmulas Sugeridas:</strong>
+              <ul style="margin-left:18px; margin-top:6px; color:#444;">
+                ${caso.formulas.map(f => `<li>${f}</li>`).join("")}
+              </ul>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; background:#fafafa; padding:12px; border-radius:6px; border:1px solid #ddd; font-size:0.85rem;">
+            <strong style="color:var(--primary);">📝 As 5 Perguntas Analíticas da Devolutiva:</strong>
+            <ol style="margin-left:20px; margin-top:6px; color:#333;">
+              ${caso.perguntas.map(p => `<li style="margin-bottom:4px;">${p}</li>`).join("")}
+            </ol>
+          </div>
+        `;
+
+        document.getElementById("btnProfCSV").onclick = () => executarDownloadCSV(caso.id);
+        document.getElementById("btnProfTabela").onclick = () => exibirModalTabela(caso.id);
+
+        container.style.display = "block";
+      });
+    }
+
+    function carregarDashboardAdmin() {
+      const q = query(collection(db, "grupos"), orderBy("dataEnvio", "desc"));
+      
+      onSnapshot(q, (snapshot) => {
+        const container = document.getElementById("listaGruposAdmin");
+        if (snapshot.empty) {
+          container.innerHTML = "<p style='text-align:center;'>Nenhum grupo cadastrado até o momento.</p>";
+          return;
+        }
+
+        container.innerHTML = "";
+        snapshot.forEach((snapDoc) => {
+          const g = snapDoc.data();
+          const id = snapDoc.id;
+
+          const avaliacao = calcularNotaGrupo(g);
+          const notaNum = parseFloat(avaliacao.notaNum);
+
+          let badgeNotaClass = "nota-baixa";
+          if (notaNum >= 8.0) badgeNotaClass = "nota-alta";
+          else if (notaNum >= 5.0) badgeNotaClass = "nota-media";
+
+          const respondidas = [g.respostaQ1, g.respostaQ2, g.respostaQ3, g.respostaQ4, g.respostaQ5].filter(q => q && q.trim() !== "").length;
+
+          const item = document.createElement("div");
+          item.className = "grupo-item";
+          item.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div>
+                <h4 style="color:var(--primary); font-size:1.15rem; margin:0;">${g.nomeGrupo} <span style="font-size:0.85rem; color:#666;">(${g.casoTitulo || "Caso não selecionado"})</span></h4>
+                <p style="font-size:0.85rem; margin-top:4px;"><strong>Analistas:</strong> ${g.componentes ? g.componentes.join(", ") : ""}</p>
+              </div>
+              <div class="nota-badge ${badgeNotaClass}">
+                Nota Automática: ${avaliacao.notaNum} / 10,0
+              </div>
+            </div>
+
+            <div style="margin: 12px 0; font-size: 0.85rem; background:#fff; padding:12px; border-radius:6px; border:1px solid #e0e0e0;">
+              <div><strong>Dia 1 (Planilha Tratada):</strong> ${g.linkDia1 ? `<a href="${g.linkDia1}" target="_blank">🔗 Abrir Planilha</a>` : "<span style='color:#c5221f;'>Pendente</span>"}</div>
+              <div style="margin-top:5px;"><strong>Dia 2 (Dashboard/Relatório):</strong> ${g.linkDia2 ? `<a href="${g.linkDia2}" target="_blank">🔗 Abrir Dashboard</a>` : "<span style='color:#c5221f;'>Pendente</span>"}</div>
+            </div>
+
+            <details style="font-size:0.85rem; background:#e6f4ea; padding:10px; border-radius:6px; margin-bottom:10px; border:1px solid #ceead6;">
+              <summary style="font-weight:bold; cursor:pointer; color:#137333;">📊 Ver Rubrica Detalhada da Nota (${avaliacao.notaNum} pts)</summary>
+              <ul style="margin-left:20px; margin-top:8px; line-height:1.5;">
+                ${avaliacao.rubricaHtml}
+              </ul>
+            </details>
+
+            <details style="font-size:0.85rem; background:#e8f0fe; padding:10px; border-radius:6px; margin-bottom:10px;">
+              <summary style="font-weight:bold; cursor:pointer; color:var(--primary);">👁 Ver Devolutiva das 5 Questões Analíticas (${respondidas}/5)</summary>
+              <div style="margin-top:10px; color:#333; line-height:1.4;">
+                <p><strong>Q1:</strong> ${g.respostaQ1 || "<i>Sem resposta</i>"}</p>
+                <p style="margin-top:6px;"><strong>Q2:</strong> ${g.respostaQ2 || "<i>Sem resposta</i>"}</p>
+                <p style="margin-top:6px;"><strong>Q3:</strong> ${g.respostaQ3 || "<i>Sem resposta</i>"}</p>
+                <p style="margin-top:6px;"><strong>Q4:</strong> ${g.respostaQ4 || "<i>Sem resposta</i>"}</p>
+                <p style="margin-top:6px;"><strong>Q5:</strong> ${g.respostaQ5 || "<i>Sem resposta</i>"}</p>
+              </div>
+            </details>
+
+            <button class="btn-del" data-id="${id}">🗑 Excluir Grupo</button>
+          `;
+          container.appendChild(item);
+        });
+
+        document.querySelectorAll(".btn-del").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            const docId = e.target.getAttribute("data-id");
+            if (confirm("Remover esta equipe do sistema?")) {
+              await deleteDoc(doc(db, "grupos", docId));
+            }
+          });
+        });
+      });
+    }
+
+    if (currentDocId && currentGrupoData) {
+      if (currentGrupoData.casoId) {
+        const c = LISTA_CASOS.find(item => item.id === currentGrupoData.casoId);
+        prepararPasso4(c);
+        window.goToStep(4);
+      } else {
+        window.goToStep(2);
+      }
+    }
+  </script>
+</body>
+</html>
