@@ -59,7 +59,7 @@
     header h1 { color: var(--primary); font-size: 1.8rem; margin-bottom: 5px; }
     header p { color: var(--text-muted); font-size: 0.95rem; }
 
-    /* Stepper / Barra de Progresso */
+    /* Stepper Interativo */
     .stepper {
       display: flex;
       justify-content: space-between;
@@ -76,18 +76,22 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
     }
-    .step.active { color: var(--primary); }
+    .step:hover { color: var(--primary); }
+    .step.active { color: var(--primary); font-weight: 700; }
     .step.completed { color: var(--success); }
     .step-number {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       background: #e8eaed;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
     }
     .step.active .step-number { background: var(--primary); color: #fff; }
     .step.completed .step-number { background: var(--success); color: #fff; }
@@ -139,8 +143,16 @@
     .btn-green { background-color: #1e8e3e; }
     .btn-green:hover { background-color: #137333; }
 
-    /* Botão Voltar Secundário */
-    .btn-back {
+    /* Barra de Navegação entre Passos */
+    .nav-buttons-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-nav {
       background-color: #f1f3f4;
       color: #3c4043;
       border: 1px solid #dadce0;
@@ -149,13 +161,21 @@
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      margin-bottom: 18px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: background 0.2s;
+      transition: background 0.2s, color 0.2s;
     }
-    .btn-back:hover { background-color: #e8eaed; color: #202124; }
+    .btn-nav:hover { background-color: #e8eaed; color: #202124; }
+    .btn-nav-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+    .btn-nav-primary:hover {
+      background-color: var(--primary-hover);
+      color: #ffffff;
+    }
 
     /* Estilo dos Passos de Orientação Fácil */
     .guia-passos { display: flex; flex-direction: column; gap: 15px; margin: 20px 0; }
@@ -297,7 +317,7 @@
     .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid #ceead6; }
     .alert-info { background: #e8f0fe; color: #1a73e8; border: 1px solid #d2e3fc; }
 
-    /* Modal de Tabela */
+    /* Modal de Tabela e Analisador */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -317,7 +337,7 @@
       overflow-y: auto;
     }
     .table-container {
-      max-height: 400px;
+      max-height: 350px;
       overflow: auto;
       border: 1px solid var(--border);
       margin: 15px 0;
@@ -354,6 +374,17 @@
       margin-top: 8px;
     }
     .btn-del:hover { background: #a50e0e; }
+
+    .nota-badge {
+      font-size: 1.1rem;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+    .nota-alta { background: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
+    .nota-media { background: #fef7e0; color: #b76e00; border: 1px solid #f2994a; }
+    .nota-baixa { background: #fce8e6; color: #c5221f; border: 1px solid #fad2cf; }
   </style>
 </head>
 <body>
@@ -368,17 +399,23 @@
       <p>Tratamento e Gestão de Dados Quantitativos</p>
     </header>
 
+    <!-- STEPPER INTERATIVO -->
     <div class="stepper">
-      <div class="step active" id="st-1"><span class="step-number">1</span> Equipe</div>
-      <div class="step" id="st-2"><span class="step-number">2</span> Como Fazer</div>
-      <div class="step" id="st-3"><span class="step-number">3</span> Escolha do Caso</div>
-      <div class="step" id="st-4"><span class="step-number">4</span> Execução e Respostas</div>
+      <div class="step active" id="st-1" onclick="window.goToStep(1)"><span class="step-number">1</span> Equipe</div>
+      <div class="step" id="st-2" onclick="window.goToStep(2)"><span class="step-number">2</span> Como Fazer</div>
+      <div class="step" id="st-3" onclick="window.goToStep(3)"><span class="step-number">3</span> Escolha do Caso</div>
+      <div class="step" id="st-4" onclick="window.goToStep(4)"><span class="step-number">4</span> Execução e Respostas</div>
     </div>
 
     <!-- PASSO 1: CADASTRO DA EQUIPE -->
     <div id="step-1" class="card step-content active">
-      <h2>1. Cadastro da Equipe de Analistas</h2>
-      <p class="description">Digite o nome da sua equipe e os componentes para começar.</p>
+      <div id="sessionBanner" class="alert alert-info" style="display:none; justify-content:space-between; align-items:center;">
+        <span id="sessionBannerText"></span>
+        <button onclick="window.goToStep(2)" class="btn-nav btn-nav-primary" style="padding:6px 14px; font-size:0.85rem;">Avançar Sem Recadastrar →</button>
+      </div>
+
+      <h2>1. Cadastro e Edição da Equipe de Analistas</h2>
+      <p class="description">Digite o nome da equipe e o <strong>Nome + Sobrenome completo</strong> de todos os componentes (Critério de Avaliação).</p>
 
       <form id="form-cadastro">
         <div class="form-group">
@@ -386,20 +423,26 @@
           <input type="text" id="nomeGrupo" placeholder="Ex: Grupo Alpha Data" required>
         </div>
 
-        <label style="margin-top: 15px; display:block;">Integrantes (Nomes Completos):</label>
-        <div class="form-group"><input type="text" id="aluno1" placeholder="Analista 1 (Obrigatório) *" required></div>
-        <div class="form-group"><input type="text" id="aluno2" placeholder="Analista 2 (Opcional)"></div>
-        <div class="form-group"><input type="text" id="aluno3" placeholder="Analista 3 (Opcional)"></div>
-        <div class="form-group"><input type="text" id="aluno4" placeholder="Analista 4 (Opcional)"></div>
-        <div class="form-group"><input type="text" id="aluno5" placeholder="Analista 5 (Opcional)"></div>
+        <label style="margin-top: 15px; display:block;">Integrantes (Obrigatório informar Nome e Sobrenome):</label>
+        <div class="form-group"><input type="text" id="aluno1" placeholder="Analista 1 (Nome e Sobrenome Completo) *" required></div>
+        <div class="form-group"><input type="text" id="aluno2" placeholder="Analista 2 (Nome e Sobrenome Completo)"></div>
+        <div class="form-group"><input type="text" id="aluno3" placeholder="Analista 3 (Nome e Sobrenome Completo)"></div>
+        <div class="form-group"><input type="text" id="aluno4" placeholder="Analista 4 (Nome e Sobrenome Completo)"></div>
+        <div class="form-group"><input type="text" id="aluno5" placeholder="Analista 5 (Nome e Sobrenome Completo)"></div>
 
-        <button type="submit" id="btnCadastrar" class="btn">Cadastrar Equipe e Avançar →</button>
+        <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
+          <button type="submit" id="btnCadastrar" class="btn" style="flex:2; min-width:220px;">Salvar Equipe e Avançar →</button>
+          <button type="button" onclick="window.goToStep(2)" class="btn-nav" style="flex:1; min-width:150px; justify-content:center;">Avançar Diretamente →</button>
+        </div>
       </form>
     </div>
 
     <!-- PASSO 2: ORIENTAÇÃO FÁCIL E EXPLICATIVA -->
     <div id="step-2" class="card step-content">
-      <button onclick="window.goToStep(1)" class="btn-back">← Voltar para Cadastro da Equipe</button>
+      <div class="nav-buttons-bar">
+        <button onclick="window.goToStep(1)" class="btn-nav">← Voltar para Cadastro</button>
+        <button onclick="window.goToStep(3)" class="btn-nav btn-nav-primary">Avançar para Escolha de Casos →</button>
+      </div>
 
       <h2>2. Guia Passo a Passo: O que vocês devem fazer?</h2>
       <p class="description">Siga este roteiro simples para realizar todo o trabalho com sucesso:</p>
@@ -496,14 +539,18 @@
         💡 <strong>Dica Importante:</strong> Vocês atuam como consultores analistas. Não existe regra de cor ou layout para a planilha. Sejam organizados e claros nas análises!
       </div>
 
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button id="btnIrParaCasos" class="btn" style="flex:2; min-width:220px;">Entendido! Escolher Nosso Caso de Negócio →</button>
+      <div class="nav-buttons-bar">
+        <button onclick="window.goToStep(1)" class="btn-nav">← Voltar para Cadastro</button>
+        <button id="btnIrParaCasos" class="btn-nav btn-nav-primary">Avançar para Escolha de Casos →</button>
       </div>
     </div>
 
     <!-- PASSO 3: ESCOLHA DO CASO -->
     <div id="step-3" class="card step-content">
-      <button onclick="window.goToStep(2)" class="btn-back">← Voltar para Orientações</button>
+      <div class="nav-buttons-bar">
+        <button onclick="window.goToStep(2)" class="btn-nav">← Voltar para Orientações</button>
+        <button onclick="window.goToStep(4)" class="btn-nav btn-nav-primary">Avançar para Execução e Respostas →</button>
+      </div>
 
       <h2>3. Seleção do Desafio de Negócio</h2>
       <p class="description">Escolham 1 dos 7 casos reais abaixo. Cada caso possui uma base bruta de +110 linhas e 5 perguntas específicas.</p>
@@ -512,7 +559,10 @@
 
     <!-- PASSO 4: EXECUÇÃO, DADOS E 5 QUESTÕES ANALÍTICAS -->
     <div id="step-4" class="card step-content">
-      <button onclick="window.goToStep(3)" class="btn-back">← Voltar e Trocar de Caso</button>
+      <div class="nav-buttons-bar">
+        <button onclick="window.goToStep(3)" class="btn-nav">← Voltar e Trocar de Caso</button>
+        <button onclick="window.abrirModalAnalisador()" class="btn-nav" style="background:#f3e8ff; border-color:#9333ea; color:#6b21a8;">🔍 Auditor / Analisador de Planilha</button>
+      </div>
 
       <div id="alertSuccess" class="alert alert-success" style="display:none;"></div>
 
@@ -598,13 +648,30 @@
       </div>
     </div>
 
+    <!-- MODAL ANALISADOR / AUDITOR DE PLANILHA -->
+    <div id="modalAnalisador" class="modal-overlay">
+      <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="color:#6b21a8;">🔍 Auditor & Analisador de Qualidade da Planilha</h3>
+          <button onclick="document.getElementById('modalAnalisador').style.display='none'" style="background:#888; color:#fff; border:none; padding:5px 12px; border-radius:4px; cursor:pointer;">Fechar X</button>
+        </div>
+        <p style="font-size:0.85rem; color:#666; margin-top:5px;">Cole a tabela copiada do Excel para testar se sua base está limpa e sem erros (Data Quality Check):</p>
+
+        <textarea id="tsvDataInput" placeholder="Cole aqui (Ctrl + V) os dados da sua planilha limpa..." style="width:100%; height:120px; margin-top:10px; font-family:monospace; font-size:0.8rem;"></textarea>
+
+        <button onclick="window.executarAuditoriaPlanilha()" class="btn" style="margin-top:10px; background:#9333ea;">⚡ Analisar Qualidade dos Dados</button>
+
+        <div id="resultadoAuditoria" style="display:none; margin-top:15px; background:#fafafa; border:1px solid #d8b4fe; border-radius:8px; padding:15px; font-size:0.88rem;"></div>
+      </div>
+    </div>
+
     <!-- MÓDULO ADMINISTRADOR DO PROFESSOR -->
     <div id="profPanel" class="admin-panel card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h2 style="margin:0;">👑 Módulo do Professor / Administrador</h2>
+        <h2 style="margin:0;">👑 Módulo do Professor / Administrador & Avaliador</h2>
         <button id="btnFecharAdmin" style="background:#888; color:#fff; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Fechar Painel</button>
       </div>
-      <p class="description">Acompanhamento das equipes, links enviados e respostas analíticas.</p>
+      <p class="description">Notas automáticas calculadas, devolutivas e auditoria dos links entregues.</p>
       
       <div id="listaGruposAdmin">Carregando dados das equipes...</div>
     </div>
@@ -614,7 +681,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
-      getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp 
+      getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, getDocs, serverTimestamp 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -901,7 +968,76 @@
     let currentGrupoData = JSON.parse(sessionStorage.getItem("tgdq_grupoData")) || null;
     let unsubscribeCasosListener = null;
 
-    // NAVEGAÇÃO ENTRE PASSOS
+    // VALIDADOR DE NOME COMPLETO (NOME E SOBRENOME)
+    function eNomeSobrenomeCompleto(nome) {
+      if (!nome) return false;
+      const partes = nome.trim().split(/\s+/);
+      return partes.length >= 2 && partes[0].length >= 2 && partes[1].length >= 2;
+    }
+
+    // AVALIADOR AUTOMÁTICO DE NOTAS (0.0 A 10.0) COM RUBRICA
+    function calcularNotaGrupo(g) {
+      let nota = 0.0;
+      let rubrica = [];
+
+      // 1. Integrantes com Nome + Sobrenome (2.0 PONTOS)
+      const comp = g.componentes || [];
+      let nomesValidos = 0;
+      comp.forEach(n => {
+        if (eNomeSobrenomeCompleto(n)) nomesValidos++;
+      });
+      if (comp.length > 0 && nomesValidos === comp.length) {
+        nota += 2.0;
+        rubrica.push("✅ Integrantes (Nome + Sobrenome completos): +2,0 pts");
+      } else {
+        const desc = comp.length === 0 ? "Nenhum integrante" : `Apenas ${nomesValidos} de ${comp.length} com sobrenome`;
+        rubrica.push(`⚠️ Integrantes Incompletos (${desc}): 0,0 / 2,0 pts`);
+      }
+
+      // 2. Escolha do Caso de Negócio (1.0 PONTO)
+      if (g.casoId) {
+        nota += 1.0;
+        rubrica.push("✅ Escolha de Caso Prático: +1,0 pt");
+      } else {
+        rubrica.push("❌ Caso de Negócio Não Selecionado: 0,0 / 1,0 pt");
+      }
+
+      // 3. Devolutiva das 5 Questões Analíticas (4.0 PONTOS - 0.8 cada)
+      const respostas = [g.respostaQ1, g.respostaQ2, g.respostaQ3, g.respostaQ4, g.respostaQ5];
+      let ptsRespostas = 0;
+      respostas.forEach((r, idx) => {
+        if (r && r.trim().length >= 40) {
+          ptsRespostas += 0.8;
+        } else if (r && r.trim().length > 10) {
+          ptsRespostas += 0.4;
+        }
+      });
+      nota += ptsRespostas;
+      rubrica.push(`📝 5 Respostas Analíticas (${ptsRespostas.toFixed(1)} / 4,0 pts)`);
+
+      // 4. Link da Planilha Tratada - Dia 1 (1.5 PONTOS)
+      if (g.linkDia1 && g.linkDia1.trim().startsWith("http")) {
+        nota += 1.5;
+        rubrica.push("✅ Link da Planilha Tratada (Dia 1): +1,5 pts");
+      } else {
+        rubrica.push("❌ Link da Planilha Tratada Pendente: 0,0 / 1,5 pts");
+      }
+
+      // 5. Link do Dashboard/Apresentação - Dia 2 (1.5 PONTOS)
+      if (g.linkDia2 && g.linkDia2.trim().startsWith("http")) {
+        nota += 1.5;
+        rubrica.push("✅ Link do Dashboard (Dia 2): +1,5 pts");
+      } else {
+        rubrica.push("❌ Link do Dashboard Pendente: 0,0 / 1,5 pts");
+      }
+
+      return {
+        notaNum: nota.toFixed(1),
+        rubricaHtml: rubrica.map(item => `<li>${item}</li>`).join("")
+      };
+    }
+
+    // NAVEGAÇÃO ENTRE PASSOS E PREENCHIMENTO AUTOMÁTICO DE EDIÇÃO
     window.goToStep = function(stepNumber) {
       document.querySelectorAll(".step-content").forEach(el => el.classList.remove("active"));
       document.querySelectorAll(".step").forEach((el, index) => {
@@ -916,6 +1052,23 @@
       document.getElementById(`step-${stepNumber}`).classList.add("active");
       document.getElementById(`st-${stepNumber}`).classList.add("active");
       
+      // PREENCHER DADOS NO PASSO 1 PARA EDIÇÃO
+      if (stepNumber === 1 && currentGrupoData) {
+        const banner = document.getElementById("sessionBanner");
+        document.getElementById("sessionBannerText").innerText = `✅ Sua equipe "${currentGrupoData.nomeGrupo}" está aberta para edição de nomes.`;
+        banner.style.display = "flex";
+
+        document.getElementById("nomeGrupo").value = currentGrupoData.nomeGrupo || "";
+        if (currentGrupoData.componentes && Array.isArray(currentGrupoData.componentes)) {
+          for (let i = 0; i < 5; i++) {
+            const elInput = document.getElementById(`aluno${i+1}`);
+            if (elInput) {
+              elInput.value = currentGrupoData.componentes[i] || "";
+            }
+          }
+        }
+      }
+
       if (stepNumber === 3) {
         renderizarCasosComEquipes();
       }
@@ -923,7 +1076,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // RENDERIZAÇÃO DOS CASOS EM TEMPO REAL MOSTRANDO AS EQUIPES
+    // RENDERIZAÇÃO DOS CASOS EM TEMPO REAL MOSTRANDO AS EQUIPES ALOCADAS
     function renderizarCasosComEquipes() {
       if (unsubscribeCasosListener) {
         unsubscribeCasosListener();
@@ -980,13 +1133,15 @@
       });
     }
 
+    // SUBMISSÃO E VALIDAÇÃO RIGOROSA DO CADASTRO DE GRUPO
     document.getElementById("form-cadastro").addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = document.getElementById("btnCadastrar");
       btn.disabled = true;
-      btn.innerText = "Registrando...";
+      btn.innerText = "Verificando dados e salvando...";
 
-      const componentes = [
+      const nomeGrupoInput = document.getElementById("nomeGrupo").value.trim();
+      const camposAlunos = [
         document.getElementById("aluno1").value.trim(),
         document.getElementById("aluno2").value.trim(),
         document.getElementById("aluno3").value.trim(),
@@ -994,22 +1149,72 @@
         document.getElementById("aluno5").value.trim()
       ].filter(n => n !== "");
 
-      const novoGrupo = {
-        nomeGrupo: document.getElementById("nomeGrupo").value.trim(),
-        componentes: componentes,
-        casoId: null,
-        casoTitulo: "",
-        linkDia1: "",
-        linkDia2: "",
-        respostaQ1: "",
-        respostaQ2: "",
-        respostaQ3: "",
-        respostaQ4: "",
-        respostaQ5: "",
-        dataEnvio: serverTimestamp()
-      };
+      // 1. Validação de Nome e Sobrenome para todos os alunos preenchidos
+      for (let i = 0; i < camposAlunos.length; i++) {
+        if (!eNomeSobrenomeCompleto(camposAlunos[i])) {
+          alert(`⚠️ O integrante "${camposAlunos[i]}" precisa ter NOME e SOBRENOME completos!`);
+          btn.disabled = false;
+          btn.innerText = "Salvar Equipe e Avançar →";
+          return;
+        }
+      }
 
       try {
+        // 2. Consulta no Firebase para impedir duplicidade de Grupos ou Alunos
+        const snapshotGrupos = await getDocs(collection(db, "grupos"));
+        let nomeGrupoDuplicado = false;
+        let alunoDuplicadoNome = null;
+
+        snapshotGrupos.forEach(docSnap => {
+          if (docSnap.id !== currentDocId) {
+            const dataDoc = docSnap.data();
+
+            if (dataDoc.nomeGrupo && dataDoc.nomeGrupo.trim().toLowerCase() === nomeGrupoInput.toLowerCase()) {
+              nomeGrupoDuplicado = true;
+            }
+
+            if (dataDoc.componentes && Array.isArray(dataDoc.componentes)) {
+              camposAlunos.forEach(alunoForm => {
+                dataDoc.componentes.forEach(alunoExistente => {
+                  if (alunoExistente.trim().toLowerCase() === alunoForm.toLowerCase()) {
+                    alunoDuplicadoNome = alunoForm;
+                  }
+                });
+              });
+            }
+          }
+        });
+
+        if (nomeGrupoDuplicado) {
+          alert(`⚠️ Já existe um grupo cadastrado com o nome "${nomeGrupoInput}". Escolha outro nome para a sua equipe!`);
+          btn.disabled = false;
+          btn.innerText = "Salvar Equipe e Avançar →";
+          return;
+        }
+
+        if (alunoDuplicadoNome) {
+          alert(`⚠️ O aluno "${alunoDuplicadoNome}" já está cadastrado em outra equipe! Os alunos não podem repetir em grupos diferentes.`);
+          btn.disabled = false;
+          btn.innerText = "Salvar Equipe e Avançar →";
+          return;
+        }
+
+        // 3. Gravação se aprovado nas validações
+        const novoGrupo = {
+          nomeGrupo: nomeGrupoInput,
+          componentes: camposAlunos,
+          casoId: currentGrupoData ? currentGrupoData.casoId || null : null,
+          casoTitulo: currentGrupoData ? currentGrupoData.casoTitulo || "" : "",
+          linkDia1: currentGrupoData ? currentGrupoData.linkDia1 || "" : "",
+          linkDia2: currentGrupoData ? currentGrupoData.linkDia2 || "" : "",
+          respostaQ1: currentGrupoData ? currentGrupoData.respostaQ1 || "" : "",
+          respostaQ2: currentGrupoData ? currentGrupoData.respostaQ2 || "" : "",
+          respostaQ3: currentGrupoData ? currentGrupoData.respostaQ3 || "" : "",
+          respostaQ4: currentGrupoData ? currentGrupoData.respostaQ4 || "" : "",
+          respostaQ5: currentGrupoData ? currentGrupoData.respostaQ5 || "" : "",
+          dataEnvio: serverTimestamp()
+        };
+
         if (!currentDocId) {
           const docRef = await addDoc(collection(db, "grupos"), novoGrupo);
           currentDocId = docRef.id;
@@ -1017,7 +1222,7 @@
           const groupRef = doc(db, "grupos", currentDocId);
           await updateDoc(groupRef, {
             nomeGrupo: novoGrupo.nomeGrupo,
-            componentes: componentes
+            componentes: camposAlunos
           });
         }
         
@@ -1027,11 +1232,11 @@
 
         window.goToStep(2);
       } catch (err) {
-        alert("Erro ao cadastrar equipe.");
+        alert("Erro ao validar e salvar equipe no servidor.");
         console.error(err);
       } finally {
         btn.disabled = false;
-        btn.innerText = "Cadastrar Equipe e Avançar →";
+        btn.innerText = "Salvar Equipe e Avançar →";
       }
     });
 
@@ -1041,7 +1246,7 @@
 
     window.selecionarCaso = async function(casoId) {
       if (!currentDocId) {
-        alert("Cadastre sua equipe primeiro!");
+        alert("Cadastre sua equipe primeiro no Passo 1!");
         window.goToStep(1);
         return;
       }
@@ -1136,6 +1341,57 @@
       });
     };
 
+    // AUDITOR E ANALISADOR DE DADOS DA PLANILHA
+    window.abrirModalAnalisador = function() {
+      document.getElementById("modalAnalisador").style.display = "flex";
+    };
+
+    window.executarAuditoriaPlanilha = function() {
+      const textInput = document.getElementById("tsvDataInput").value.trim();
+      const divRes = document.getElementById("resultadoAuditoria");
+
+      if (!textInput) {
+        alert("Cole os dados da sua planilha no campo de texto para executar a análise!");
+        return;
+      }
+
+      const linhas = textInput.split("\n").filter(l => l.trim() !== "");
+      if (linhas.length < 2) {
+        alert("Quantidade insuficiente de linhas. Cole a tabela completa do seu Excel.");
+        return;
+      }
+
+      let totalLinhas = linhas.length - 1; // excluindo cabeçalho
+      let celulasVazias = 0;
+      let errosFormula = 0;
+      let colunasCount = linhas[0].split("\t").length;
+
+      linhas.forEach((rowStr, rIdx) => {
+        if (rIdx === 0) return;
+        const celulas = rowStr.split("\t");
+        celulas.forEach(c => {
+          const val = c.trim().toUpperCase();
+          if (val === "" || val === "NULL" || val === "-" || val === "VAZIO") celulasVazias++;
+          if (val.includes("#N/A") || val.includes("#VALOR!") || val.includes("DIV/0!")) errosFormula++;
+        });
+      });
+
+      let statusDQ = (celulasVazias === 0 && errosFormula === 0) 
+        ? `<strong style="color:#137333;">🟢 APROVADA NA AUDITORIA DE DATA QUALITY!</strong>`
+        : `<strong style="color:#c5221f;">🔴 REPROVADA NA AUDITORIA! Foram encontrados erros ou células em branco.</strong>`;
+
+      divRes.innerHTML = `
+        <h4>📊 Diagnóstico do Analisador de Planilha:</h4>
+        <p style="margin-top:6px;">• <strong>Total de Registros Analisados:</strong> ${totalLinhas} linhas | ${colunasCount} colunas</p>
+        <p>• <strong>Células Vazias / Sem Tratamento:</strong> <span style="font-weight:bold; color:${celulasVazias === 0 ? '#137333' : '#c5221f'};">${celulasVazias}</span></p>
+        <p>• <strong>Erros de Fórmulas (#N/A, #VALOR!):</strong> <span style="font-weight:bold; color:${errosFormula === 0 ? '#137333' : '#c5221f'};">${errosFormula}</span></p>
+        <div style="margin-top:12px; padding:10px; background:#fff; border-radius:6px; border:1px solid #ddd;">
+          ${statusDQ}
+        </div>
+      `;
+      divRes.style.display = "block";
+    };
+
     document.getElementById("form-entregas").addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = document.getElementById("btnSalvarEntregas");
@@ -1187,7 +1443,7 @@
       }
     });
 
-    // MÓDULO DO PROFESSOR
+    // MÓDULO DO PROFESSOR COM AVALIADOR AUTOMÁTICO DE NOTAS
     const btnToggleProfTop = document.getElementById("btnToggleProfTop");
     const profPanel = document.getElementById("profPanel");
     const btnFecharAdmin = document.getElementById("btnFecharAdmin");
@@ -1230,19 +1486,43 @@
           const g = snapDoc.data();
           const id = snapDoc.id;
 
+          // CÁLCULO DA NOTA AUTOMÁTICA E RUBRICA DE AVALIAÇÃO
+          const avaliacao = calcularNotaGrupo(g);
+          const notaNum = parseFloat(avaliacao.notaNum);
+
+          let badgeNotaClass = "nota-baixa";
+          if (notaNum >= 8.0) badgeNotaClass = "nota-alta";
+          else if (notaNum >= 5.0) badgeNotaClass = "nota-media";
+
+          const respondidas = [g.respostaQ1, g.respostaQ2, g.respostaQ3, g.respostaQ4, g.respostaQ5].filter(q => q && q.trim() !== "").length;
+
           const item = document.createElement("div");
           item.className = "grupo-item";
           item.innerHTML = `
-            <h4 style="color:var(--primary); font-size:1.1rem;">${g.nomeGrupo} <span style="font-size:0.85rem; color:#666;">(${g.casoTitulo || "Caso não selecionado"})</span></h4>
-            <p style="font-size:0.85rem; margin-top:4px;"><strong>Analistas:</strong> ${g.componentes ? g.componentes.join(", ") : ""}</p>
-            
-            <div style="margin: 10px 0; font-size: 0.85rem; background:#fff; padding:10px; border-radius:6px; border:1px solid #e0e0e0;">
-              <div><strong>Dia 1 (Planilha Tratada):</strong> ${g.linkDia1 ? `<a href="${g.linkDia1}" target="_blank">🔗 Abrir Planilha</a>` : "<span style='color:#888;'>Pendente</span>"}</div>
-              <div style="margin-top:5px;"><strong>Dia 2 (Dashboard/Relatório):</strong> ${g.linkDia2 ? `<a href="${g.linkDia2}" target="_blank">🔗 Abrir Dashboard</a>` : "<span style='color:#888;'>Pendente</span>"}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div>
+                <h4 style="color:var(--primary); font-size:1.15rem; margin:0;">${g.nomeGrupo} <span style="font-size:0.85rem; color:#666;">(${g.casoTitulo || "Caso não selecionado"})</span></h4>
+                <p style="font-size:0.85rem; margin-top:4px;"><strong>Analistas:</strong> ${g.componentes ? g.componentes.join(", ") : ""}</p>
+              </div>
+              <div class="nota-badge ${badgeNotaClass}">
+                Nota Automática: ${avaliacao.notaNum} / 10,0
+              </div>
             </div>
 
+            <div style="margin: 12px 0; font-size: 0.85rem; background:#fff; padding:12px; border-radius:6px; border:1px solid #e0e0e0;">
+              <div><strong>Dia 1 (Planilha Tratada):</strong> ${g.linkDia1 ? `<a href="${g.linkDia1}" target="_blank">🔗 Abrir Planilha</a>` : "<span style='color:#c5221f;'>Pendente</span>"}</div>
+              <div style="margin-top:5px;"><strong>Dia 2 (Dashboard/Relatório):</strong> ${g.linkDia2 ? `<a href="${g.linkDia2}" target="_blank">🔗 Abrir Dashboard</a>` : "<span style='color:#c5221f;'>Pendente</span>"}</div>
+            </div>
+
+            <details style="font-size:0.85rem; background:#e6f4ea; padding:10px; border-radius:6px; margin-bottom:10px; border:1px solid #ceead6;">
+              <summary style="font-weight:bold; cursor:pointer; color:#137333;">📊 Ver Rubrica Detalhada da Nota (${avaliacao.notaNum} pts)</summary>
+              <ul style="margin-left:20px; margin-top:8px; line-height:1.5;">
+                ${avaliacao.rubricaHtml}
+              </ul>
+            </details>
+
             <details style="font-size:0.85rem; background:#e8f0fe; padding:10px; border-radius:6px; margin-bottom:10px;">
-              <summary style="font-weight:bold; cursor:pointer; color:var(--primary);">👁 Ver Respostas das 5 Questões Analíticas</summary>
+              <summary style="font-weight:bold; cursor:pointer; color:var(--primary);">👁 Ver Devolutiva das 5 Questões Analíticas (${respondidas}/5)</summary>
               <div style="margin-top:10px; color:#333; line-height:1.4;">
                 <p><strong>Q1:</strong> ${g.respostaQ1 || "<i>Sem resposta</i>"}</p>
                 <p style="margin-top:6px;"><strong>Q2:</strong> ${g.respostaQ2 || "<i>Sem resposta</i>"}</p>
