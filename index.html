@@ -34,10 +34,34 @@
 
     .container { width: 100%; max-width: 950px; }
 
-    header { text-align: center; margin-bottom: 25px; }
+    /* Cabeçalho e Botão do Professor Fixo */
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
     header h1 { color: var(--primary); font-size: 1.8rem; margin-bottom: 5px; }
     header p { color: var(--text-muted); font-size: 0.95rem; }
 
+    .top-bar-admin {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 15px;
+    }
+    .btn-prof-top {
+      background: #3c4043;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .btn-prof-top:hover { background: #202124; }
+
+    /* Stepper / Barra de Progresso */
     .stepper {
       display: flex;
       justify-content: space-between;
@@ -184,16 +208,42 @@
     .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid #ceead6; }
     .alert-info { background: #e8f0fe; color: #1a73e8; border: 1px solid #d2e3fc; }
 
-    .admin-link { text-align: center; margin-top: 20px; }
-    .btn-admin-toggle { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-size: 0.85rem; }
-    .admin-panel { display: none; margin-top: 25px; border-top: 2px dashed var(--border); padding-top: 20px; }
-    .grupo-item { background: #f8f9fa; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 12px; }
-    .btn-del { background: #d93025; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
+    /* Painel do Professor */
+    .admin-panel {
+      display: none;
+      margin-top: 25px;
+      border: 2px solid #3c4043;
+      padding: 25px;
+      background: #ffffff;
+    }
+    .grupo-item {
+      background: #f8f9fa;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 12px;
+    }
+    .btn-del {
+      background: #d93025;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+    .btn-del:hover { background: #a50e0e; }
   </style>
 </head>
 <body>
 
   <div class="container">
+    <div class="top-bar-admin">
+      <button id="btnToggleProfTop" class="btn-prof-top">🔐 Área do Professor (Painel)</button>
+    </div>
+
     <header>
       <h1>Plataforma TGDQ</h1>
       <p>Tratamento e Gestão de Dados Quantitativos</p>
@@ -228,7 +278,7 @@
       </form>
     </div>
 
-    <!-- PASSO 2: ORIENTAÇÕES PEDAGÓGICAS E AUTONOMIA -->
+    <!-- PASSO 2: ORIENTAÇÕES -->
     <div id="step-2" class="card step-content">
       <h2>2. Diretrizes do Projeto & Autonomia do Analista</h2>
       
@@ -240,7 +290,7 @@
 
       <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Roteiro de Entregas (2 Dias de Trabalho):</h3>
       <div style="margin: 15px 0; font-size:0.95rem;">
-        <p><strong>• DIA 1 - Tratamento e Higienização:</strong> Acessar a base bruta "suja", eliminar erros, padronizar formatos e gerar uma base limpa e confiável.</p>
+        <p><strong>• DIA 1 - Tratamento e Higienização:</strong> Acessar a base bruta de no mínimo 100 linhas, eliminar erros, padronizar formatos e gerar uma base limpa e confiável.</p>
         <p style="margin-top:8px;"><strong>• DIA 2 - Análise & Diagnóstico Estratégico:</strong> Aplicar fórmulas de negócio, consolidar indicadores (KPIs) e gerar um relatório/dashboard com recomendações de tomada de decisão.</p>
       </div>
 
@@ -250,7 +300,7 @@
     <!-- PASSO 3: ESCOLHA DO CASO -->
     <div id="step-3" class="card step-content">
       <h2>3. Seleção do Desafio de Negócio</h2>
-      <p class="description">Escolham 1 dos 7 casos reais abaixo. Cada caso possui uma base de dados específica e um conjunto de regras de negócio.</p>
+      <p class="description">Escolham 1 dos 7 casos reais abaixo. Cada caso possui uma base de dados extensa (+100 linhas) e regras de negócio específicas.</p>
       <div id="casesContainer" class="cases-grid"></div>
     </div>
 
@@ -266,14 +316,14 @@
         <h3 id="displayCasoTitulo" style="color:var(--primary); font-size:1.3rem; margin-bottom:8px;"></h3>
         <p id="displayCasoDesc" style="font-size:0.95rem; color:#444; margin-bottom:15px;"></p>
 
-        <!-- BOTÃO PARA DADOS BRUTOS -->
-        <div style="background:#e8f0fe; padding:15px; border-radius:8px; display:flex; justify-size:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
+        <!-- BOTÃO PARA DADOS BRUTOS (100+ LINHAS) -->
+        <div style="background:#e8f0fe; padding:15px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
           <div>
-            <strong style="color:var(--primary);">📥 Base de Dados Bruta (Suja):</strong><br>
-            <span style="font-size:0.85rem; color:var(--text-muted);">Copie ou baixe estes dados para começar a limpeza no seu Excel/Google Sheets.</span>
+            <strong style="color:var(--primary);">📥 Base de Dados Bruta (+100 Linhas de Dados Sujos):</strong><br>
+            <span style="font-size:0.85rem; color:var(--text-muted);">Copie ou faça o download da planilha oficial para iniciar o tratamento.</span>
           </div>
           <a id="btnDownloadDados" href="#" target="_blank" class="btn" style="width:auto; padding:10px 18px; font-size:0.9rem;">
-            📂 Acessar Base de Dados Bruta
+            📂 Abrir Planilha Oficial no Google Sheets / Excel
           </a>
         </div>
 
@@ -308,15 +358,15 @@
       </form>
     </div>
 
-    <!-- ÁREA DO PROFESSOR -->
-    <div class="admin-link">
-      <button id="btnToggleProf" class="btn-admin-toggle">🔐 Área do Professor (Painel Geral)</button>
-    </div>
-
+    <!-- MÓDULO ADMINISTRADOR DO PROFESSOR (COMPLETO E PROTEGIDO) -->
     <div id="profPanel" class="admin-panel card">
-      <h2 style="text-align:center;">Painel do Professor</h2>
-      <p class="description" style="text-align:center;">Acompanhamento de equipes e validação de entregas.</p>
-      <div id="listaGruposAdmin">Carregando dados...</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h2 style="margin:0;">👑 Módulo do Professor / Administrador</h2>
+        <button id="btnFecharAdmin" style="background:#888; color:#fff; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Fechar Painel</button>
+      </div>
+      <p class="description">Acompanhamento e gestão em tempo real das equipes cadastradas, casos escolhidos e links entregues.</p>
+      
+      <div id="listaGruposAdmin">Carregando dados das equipes...</div>
     </div>
 
   </div>
@@ -340,162 +390,162 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // BASE DE CONHECIMENTO COMPLETA COM INSTRUÇÕES, FÓRMULAS E LINKS DOS 7 CASOS
+    // BASE DE CONHECIMENTO COMPLETA COM INSTRUÇÕES, FÓRMULAS E PLANILHAS DE +100 LINHAS
     const LISTA_CASOS = [
       {
         id: 1,
         titulo: "Caso 1: Retenção de Clientes (Churn E-Commerce)",
-        desc: "Análise de evasão de clientes em uma loja virtual com dados corrompidos de compras e datas.",
-        linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing", // Exemplo de link da base bruta
+        desc: "Análise de evasão de clientes em uma loja virtual com dados de 120 transações com datas e valores desformatados.",
+        linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
         sujeiras: [
-          "IDs de Clientes duplicados com informações conflitantes.",
-          "Datas de última compra no formato texto (DD/MM/AAAA e MM/DD/AAAA misturados).",
-          "Valores de faturamento formatados com símbolo de moeda como texto (ex: 'R$ 150,00' inviabilizando somas).",
-          "Registros vazios no campo 'Status de Cancelamento'."
+          "IDs de Clientes duplicados nas 120 linhas com dados conflitantes.",
+          "Datas de última compra no formato texto misturando DD/MM/AAAA e MM/DD/AAAA.",
+          "Valores de faturamento formatados com texto (ex: 'R$ 150,00' que impede cálculos).",
+          "Registros nulos e campos incompletos no 'Status de Cancelamento'."
         ],
         formulas: [
-          "<b>PROCV ou XLOOKUP:</b> Usar para cruzar o cadastro de clientes com a tabela de histórico de compras pelo ID.",
-          "<b>DIAS ou DATEDIF:</b> Usar para calcular o tempo sem comprar: <span class='formula-badge'>=HOJE() - Data_Ultima_Compra</span>. Define se o cliente está inativo.",
-          "<b>SE (IF):</b> Classificar se o cliente deu Churn: <span class='formula-badge'>=SE(Dias_Inativo > 90; 'Churn'; 'Ativo')</span>.",
-          "<b>Taxa de Churn (%):</b> <span class='formula-badge'>=(Total de Clientes Churn / Total Geral de Clientes) * 100</span>. Usada para medir o impacto geral no negócio."
+          "<b>PROCV ou XLOOKUP:</b> Cruzar o cadastro de clientes com a tabela de histórico de compras pelo ID.",
+          "<b>DIAS ou DATEDIF:</b> Calcular o tempo sem comprar: <span class='formula-badge'>=HOJE() - Data_Ultima_Compra</span>.",
+          "<b>SE (IF):</b> Classificar o status do cliente: <span class='formula-badge'>=SE(Dias_Inativo > 90; 'Churn'; 'Ativo')</span>.",
+          "<b>Taxa de Churn (%):</b> <span class='formula-badge'>=(Clientes Churn / Total Clientes) * 100</span>."
         ],
         perguntas: [
-          "Qual é a Taxa de Churn geral da empresa?",
-          "Qual categoria de produtos apresenta maior perda de clientes?",
-          "Qual ação imediata a equipe comercial deve tomar com base nos dados?"
+          "Qual é a Taxa de Churn geral da empresa no período?",
+          "Qual categoria de produtos apresenta a maior taxa de evasão de clientes?",
+          "Qual estratégia de retenção imediata a equipe comercial deve adotar?"
         ]
       },
       {
         id: 2,
         titulo: "Caso 2: Otimização Logística e Fretes",
-        desc: "Diagnóstico de atrasos e custos de fretes em entregas estaduais com inconsistências geográficas.",
+        desc: "Diagnóstico de atrasos e custos em 150 envios estaduais com erros de digitação e inconsistências geográficas.",
         linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
         sujeiras: [
-          "CEPs informados sem o zero à esquerda ou com caracteres especiais.",
-          "Datas de entrega efetiva anteriores à data de envio (erro de digitação).",
+          "CEPs informados sem o zero à esquerda ou com caracteres especiais em +100 registros.",
+          "Datas de entrega efetiva registradas como anteriores à data de despacho.",
           "Pesos de mercadoria em gramas e quilos misturados na mesma coluna.",
           "Cidades com nomes grafados incorretamente (ex: 'Symptom', 'Sao Paulo', 'S. Paulo')."
         ],
         formulas: [
-          "<b>TEXTO ou CONCATENAR:</b> Ajustar formato de CEP e padronizar textos das cidades.",
-          "<b>SE (IF) para Atrasos:</b> Identificar estouro de prazo: <span class='formula-badge'>=SE(Data_Entrega > Data_Prometida; 1; 0)</span>.",
-          "<b>MÉDIASE (AVERAGEIF):</b> Usar para calcular o Custo Médio do Frete por Região/Estado.",
-          "<b>Indicador OTIF (% On-Time In-Full):</b> <span class='formula-badge'>=(Entregas no Prazo / Total de Entregas) * 100</span>. Usado para medir a eficiência da transportadora."
+          "<b>TEXTO ou CONCATENAR:</b> Ajustar formato de CEP de 8 dígitos e padronizar cidades.",
+          "<b>SE (IF) para Atrasos:</b> Identificar atrasos no frete: <span class='formula-badge'>=SE(Data_Entrega > Data_Prometida; 1; 0)</span>.",
+          "<b>MÉDIASE (AVERAGEIF):</b> Calcular o Custo Médio do Frete por Estado/Região.",
+          "<b>Indicador OTIF (% On-Time In-Full):</b> <span class='formula-badge'>=(Entregas no Prazo / Total Entregas) * 100</span>."
         ],
         perguntas: [
           "Qual transportadora tem o menor índice OTIF (pior desempenho)?",
-          "Qual região geográfica consome o maior custo proporcional de frete?",
+          "Qual estado consome o maior custo proporcional de frete?",
           "Quais rotas precisam de renegociação contratual?"
         ]
       },
       {
         id: 3,
         titulo: "Caso 3: Previsão de Demanda e Ruptura de Vendas",
-        desc: "Ajuste de estoque e projeção de vendas evitando falta de produtos na prateleira.",
+        desc: "Ajuste de estoque e projeção de vendas sobre uma base histórica de 110 dias de vendas.",
         linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
         sujeiras: [
-          "Séries temporais com dias faltantes no histórico de vendas.",
-          "Outliers acidentais (ex: venda registrada como 99999 unidades por erro no caixa).",
-          "Nomes de produtos idênticos com códigos de barras diferentes."
+          "Dias faltantes na sequência histórica da série temporal.",
+          "Outliers gritantes (vendas acidentais registradas como 99.999 unidades no PDV).",
+          "Nomes de produtos idênticos com códigos de barras divergentes."
         ],
         formulas: [
-          "<b>MÉDIA / MENSAL:</b> Calcular a venda média diária do produto para estimar a demanda futura.",
-          "<b>MÁXIMO e MÍNIMO:</b> Identificar picos e discrepâncias de vendas (outliers).",
-          "<b>Estoque de Segurança:</b> <span class='formula-badge'>=(Venda Máxima Diária * Prazo Entrega) - (Venda Média Diária * Prazo Entrega)</span>. Usado para evitar ruptura.",
-          "<b>Dias de Cobertura de Estoque:</b> <span class='formula-badge'>=Estoque Atual / Venda Média Diária</span>. Indica quantos dias o estoque dura."
+          "<b>MÉDIA / MENSAL:</b> Calcular a venda média diária do produto para estimar a demanda.",
+          "<b>MÁXIMO e MÍNIMO:</b> Identificar e tratar picos acidentais de vendas (outliers).",
+          "<b>Estoque de Segurança:</b> <span class='formula-badge'>=(Venda Máxima * Prazo) - (Venda Média * Prazo)</span>.",
+          "<b>Dias de Cobertura de Estoque:</b> <span class='formula-badge'>=Estoque Actual / Venda Média Diária</span>."
         ],
         perguntas: [
           "Quais produtos correm risco iminente de ruptura (estoque zerado)?",
           "Quais itens estão com excesso de estoque (capital parado)?",
-          "Qual o plano de compras recomendado para o próximo mês?"
+          "Qual o plano de compras sugerido para o próximo mês?"
         ]
       },
       {
         id: 4,
         titulo: "Caso 4: Gestão de Estoque e Curva ABC (SKUs)",
-        desc: "Classificação estratégica de inventário de almoxarifado por relevância financeira.",
+        desc: "Classificação estratégica de inventário de 130 SKUs de almoxarifado por relevância financeira.",
         linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
         sujeiras: [
-          "Código SKU com espaços antes ou depois do texto (dificultando PROCV).",
-          "Valores unitários zerados ou negativos.",
-          "Unidades de medida inconsistentes (ex: 'CX', 'CAIXA', 'UN', 'UNIDADE')."
+          "Código SKU com espaços invisíveis antes e depois do texto.",
+          "Valores unitários zerados ou com valores negativos.",
+          "Unidades de medida inconsistentes ('CX', 'CAIXA', 'UN', 'UNIDADE')."
         ],
         formulas: [
-          "<b>ARRUMAR (TRIM):</b> Remover espaços invisíveis dos códigos SKUs.",
-          "<b>SOMASE (SUMIF):</b> Multiplicar Quantidade x Custo Unitário para obter o Valor Total em Estoque por item.",
-          "<b>% Acumulada (Curva ABC):</b> Ordenar itens do maior valor para o menor e calcular a participação relativa acumulada.",
-          "<b>Giro de Estoque:</b> <span class='formula-badge'>=Custo das Mercadorias Vendidas (CMV) / Valor Médio do Estoque</span>."
+          "<b>ARRUMAR (TRIM):</b> Eliminar espaços em branco das chaves dos SKUs.",
+          "<b>SOMASE (SUMIF):</b> Multiplicar Quantidade x Custo Unitário para achar o Valor Total por item.",
+          "<b>% Acumulada (Curva ABC):</b> Ordenar itens do maior valor para o menor e calcular a participação relativa.",
+          "<b>Giro de Estoque:</b> <span class='formula-badge'>=CMV / Valor Médio do Estoque</span>."
         ],
         perguntas: [
-          "Quais SKUs pertencem à Classe A (representam ~80% do valor imobilizado)?",
-          "Existem produtos de baixa rotatividade acumulando custos de armazenagem?",
-          "Como a empresa deve priorizar as contagens físicas de inventário?"
+          "Quais SKUs pertencem à Classe A (representam ~80% do valor do estoque)?",
+          "Existem produtos de baixa rotatividade acumulando custos no almoxarifado?",
+          "Como priorizar a contagem física no inventário?"
         ]
       },
       {
         id: 5,
         titulo: "Caso 5: Eficiência do Atendimento ao Cliente (SAC)",
-        desc: "Análise de tempo de resposta e qualidade de suporte em central de chamados.",
+        desc: "Análise de tempo de resposta e qualidade de suporte sobre 140 chamados de clientes.",
         linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
         sujeiras: [
-          "Horários de abertura e fechamento registrados como texto comum.",
-          "Chamados sem data de encerramento marcada.",
-          "Categorias de problemas inconsistentes (ex: 'Dúvida', 'DUVIDAS', 'Erro de Login', 'Login')."
+          "Horários de abertura e fechamento salvos como formato texto incompatível.",
+          "Chamados sem data/hora de encerramento preenchida.",
+          "Categorias de chamados duplicadas com pequenas variações de maiúsculas e acentos."
         ],
         formulas: [
-          "<b>HORA / MINUTO ou Subtração Direta:</b> <span class='formula-badge'>=Data_Hora_Fim - Data_Hora_Inicio</span> (Formatado como [h]:mm) para achar o TMA.",
-          "<b>Tempo Médio de Atendimento (TMA):</b> <span class='formula-badge'>=MÉDIA(Coluna_TMA)</span>. Usado para medir a agilidade da equipe.",
-          "<b>First Contact Resolution (FCR %):</b> <span class='formula-badge'>=(Chamados Resolvidos no 1º Contato / Total Chamados) * 100</span>.",
-          "<b>CONT.SE (COUNTIF):</b> Contar volume de chamados por categoria de problema."
+          "<b>HORA / Subtração:</b> <span class='formula-badge'>=Data_Hora_Fim - Data_Hora_Inicio</span> para obter a duração do chamado.",
+          "<b>Tempo Médio de Atendimento (TMA):</b> <span class='formula-badge'>=MÉDIA(Coluna_Tempo)</span>.",
+          "<b>First Contact Resolution (FCR %):</b> <span class='formula-badge'>=(Resolvidos 1º Contato / Total Chamados) * 100</span>.",
+          "<b>CONT.SE (COUNTIF):</b> Mapear volume por categoria de problema."
         ],
         perguntas: [
-          "Qual é o TMA médio da equipe por turno de trabalho?",
-          "Qual é o principal motivo de abertura de chamados na central?",
-          "Onde está o gargalo operacional que causa insatisfação do cliente?"
+          "Qual é o TMA médio da equipe por turno?",
+          "Qual o principal motivo de abertura de tickets no SAC?",
+          "Onde está o gargalo operacional do atendimento?"
         ]
       },
       {
         id: 6,
         titulo: "Caso 6: Análise de Inadimplência e Risco de Crédito",
-        desc: "Avaliação de carteira financeira e inadimplência de pagamentos de clientes corporativos.",
+        desc: "Avaliação de carteira financeira com 125 títulos de cobrança de clientes corporativos.",
         linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
         sujeiras: [
-          "Valores de dívida salvos como números decimais com vírgula e ponto trocados.",
-          "CNPJ/CPF sem formatação de zeros à esquerda.",
-          "Status de pagamento ambíguos ('Pago', 'PG', 'PAGO_OK', 'Em Aberto')."
+          "Valores numéricos de dívidas com ponto e vírgula invertidos.",
+          "CNPJ/CPF sem formatação e sem zeros iniciais.",
+          "Status de pagamento ambíguos ('Pago', 'PG', 'Em Aberto', 'PAGO_OK')."
         ],
         formulas: [
-          "<b>SUBSTITUIR (SUBSTITUTE):</b> Corrigir pontos e vírgulas para transformar texto em número real.",
-          "<b>Taxa de Inadimplência (%):</b> <span class='formula-badge'>=(Valor de Títulos Vencidos e Não Pagos / Valor Total Concedido) * 100</span>.",
-          "<b>SE encadeado / IFS:</b> Classificar Faixas de Atraso (0-30 dias, 31-60 dias, >90 dias).",
-          "<b>SOMASE (SUMIF):</b> Mapear o montante financeiro em risco por região ou segmento de cliente."
+          "<b>SUBSTITUIR (SUBSTITUTE):</b> Corrigir formatação de moedas de texto para número real.",
+          "<b>Taxa de Inadimplência (%):</b> <span class='formula-badge'>=(Vencidos Não Pagos / Total Carteira) * 100</span>.",
+          "<b>SE Encadeado:</b> Agrupar clientes em Faixas de Atraso (0-30d, 31-60d, >90d).",
+          "<b>SOMASE (SUMIF):</b> Calcular montante total em risco por região."
         ],
         perguntas: [
-          "Qual a taxa de inadimplência atual da carteira?",
-          "Qual perfil de cliente apresenta o maior risco de calote?",
-          "Qual política de cobrança preventiva deve ser adotada?"
+          "Qual a taxa de inadimplência da carteira de clientes?",
+          "Qual perfil de cliente oferece o maior risco financeiro?",
+          "Qual a recomendação para a régua de cobrança?"
         ]
       },
       {
         id: 7,
         titulo: "Caso 7: Desempenho e Comissões da Equipe de Vendas",
-        desc: "Cálculo de metas, bonificações e eficiência da força de vendas regional.",
+        desc: "Cálculo de metas, bonificações e comissões sobre 115 relatórios de vendas regionais.",
         linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
         sujeiras: [
-          "Relatórios regionais fragmentados e com vendas contadas duas vezes (duplicidade).",
-          "Nomes de vendedores grafados com variações (ex: 'João Silva', 'J. Silva').",
-          "Metas cadastradas em aba separada sem chave de conexão direta."
+          "Relatórios regionais com registros duplicados de uma mesma venda.",
+          "Nomes de vendedores grafados de maneiras diferentes.",
+          "Metas em abas separadas sem ID de conexão direta."
         ],
         formulas: [
-          "<b>PROCV / XLOOKUP:</b> Trazer a Meta do vendedor para ao lado da sua Venda Realizada.",
+          "<b>PROCV / XLOOKUP:</b> Trazer a Meta do vendedor para a tabela de Vendas Realizadas.",
           "<b>% Atingimento de Meta:</b> <span class='formula-badge'>=(Venda Realizada / Meta) * 100</span>.",
-          "<b>SE (IF) para Comissão Gradativa:</b> <span class='formula-badge'>=SE(Atingimento >= 100%; Venda * 5%; Venda * 2%)</span>. Calcula a remuneração variável.",
-          "<b>RANKING / MAIOR:</b> Identificar os melhores vendedores do mês."
+          "<b>SE (IF) para Comissão:</b> <span class='formula-badge'>=SE(Atingimento >= 100%; Venda * 5%; Venda * 2%)</span>.",
+          "<b>RANKING / MÁXIMO:</b> Classificar a produtividade da equipe."
         ],
         perguntas: [
-          "Quais vendedores atingiram 100% da meta estipulada?",
-          "Qual é o custo total de comissões que a empresa pagará neste mês?",
-          "Qual região teve o pior desempenho relativo em relação à meta?"
+          "Quais vendedores atingiram a meta estabelecida?",
+          "Qual o valor total de comissão a ser pago no mês?",
+          "Qual região teve o pior desempenho percentual?"
         ]
       }
     ];
@@ -532,6 +582,7 @@
       });
     }
 
+    // Ações de Cadastro
     document.getElementById("form-cadastro").addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = document.getElementById("btnCadastrar");
@@ -566,7 +617,7 @@
 
         goToStep(2);
       } catch (err) {
-        alert("Erro ao cadastrar equipe.");
+        alert("Erro ao cadastrar equipe no servidor.");
         console.error(err);
       } finally {
         btn.disabled = false;
@@ -615,17 +666,9 @@
       document.getElementById("displayCasoDesc").innerText = caso.desc;
       document.getElementById("btnDownloadDados").href = caso.linkDados;
 
-      // Renderizar Sujeiras
-      const ulS = document.getElementById("listSujeiras");
-      ulS.innerHTML = caso.sujeiras.map(s => `<li>${s}</li>`).join("");
-
-      // Renderizar Fórmulas
-      const ulF = document.getElementById("listFormulas");
-      ulF.innerHTML = caso.formulas.map(f => `<li>${f}</li>`).join("");
-
-      // Renderizar Perguntas
-      const ulP = document.getElementById("listPerguntas");
-      ulP.innerHTML = caso.perguntas.map(p => `<li>${p}</li>`).join("");
+      document.getElementById("listSujeiras").innerHTML = caso.sujeiras.map(s => `<li>${s}</li>`).join("");
+      document.getElementById("listFormulas").innerHTML = caso.formulas.map(f => `<li>${f}</li>`).join("");
+      document.getElementById("listPerguntas").innerHTML = caso.perguntas.map(p => `<li>${p}</li>`).join("");
 
       if (currentGrupoData.linkDia1) document.getElementById("linkDia1").value = currentGrupoData.linkDia1;
       if (currentGrupoData.linkDia2) document.getElementById("linkDia2").value = currentGrupoData.linkDia2;
@@ -664,25 +707,33 @@
       }
     });
 
-    // Módulo de Administração do Professor
-    const btnToggleProf = document.getElementById("btnToggleProf");
+    // Módulos do Professor
+    const btnToggleProfTop = document.getElementById("btnToggleProfTop");
     const profPanel = document.getElementById("profPanel");
+    const btnFecharAdmin = document.getElementById("btnFecharAdmin");
     let isAuthed = false;
 
-    btnToggleProf.addEventListener("click", () => {
+    function abrirPainelProfessor() {
       if (!isAuthed) {
         const pwd = prompt("Digite a senha do professor:");
         if (pwd === "1234") {
           isAuthed = true;
           profPanel.style.display = "block";
           carregarDashboardAdmin();
+          window.scrollTo({ top: profPanel.offsetTop, behavior: 'smooth' });
         } else if (pwd !== null) {
           alert("Senha incorreta!");
         }
       } else {
         profPanel.style.display = profPanel.style.display === "none" ? "block" : "none";
+        if (profPanel.style.display === "block") {
+          window.scrollTo({ top: profPanel.offsetTop, behavior: 'smooth' });
+        }
       }
-    });
+    }
+
+    btnToggleProfTop.addEventListener("click", abrirPainelProfessor);
+    btnFecharAdmin.addEventListener("click", () => { profPanel.style.display = "none"; });
 
     function carregarDashboardAdmin() {
       const q = query(collection(db, "grupos"), orderBy("dataEnvio", "desc"));
@@ -690,7 +741,7 @@
       onSnapshot(q, (snapshot) => {
         const container = document.getElementById("listaGruposAdmin");
         if (snapshot.empty) {
-          container.innerHTML = "<p style='text-align:center;'>Nenhum grupo cadastrado ainda.</p>";
+          container.innerHTML = "<p style='text-align:center;'>Nenhum grupo cadastrado até o momento.</p>";
           return;
         }
 
@@ -702,11 +753,11 @@
           const item = document.createElement("div");
           item.className = "grupo-item";
           item.innerHTML = `
-            <h4 style="color:var(--primary);">${g.nomeGrupo} <span style="font-size:0.85rem; color:#666;">(${g.casoTitulo || "Caso não selecionado"})</span></h4>
+            <h4 style="color:var(--primary); font-size:1.1rem;">${g.nomeGrupo} <span style="font-size:0.85rem; color:#666;">(${g.casoTitulo || "Caso não selecionado"})</span></h4>
             <p style="font-size:0.85rem; margin-top:4px;"><strong>Analistas:</strong> ${g.componentes ? g.componentes.join(", ") : ""}</p>
             <div style="margin: 10px 0; font-size: 0.85rem; background:#fff; padding:10px; border-radius:6px; border:1px solid #e0e0e0;">
-              <div><strong>Dia 1 (Planilha Tratada):</strong> ${g.linkDia1 ? `<a href="${g.linkDia1}" target="_blank">🔗 Abrir Planilha</a>` : "<span style='color:#888;'>Não enviado</span>"}</div>
-              <div style="margin-top:5px;"><strong>Dia 2 (Dashboard/Relatório):</strong> ${g.linkDia2 ? `<a href="${g.linkDia2}" target="_blank">🔗 Abrir Dashboard</a>` : "<span style='color:#888;'>Não enviado</span>"}</div>
+              <div><strong>Dia 1 (Planilha Tratada):</strong> ${g.linkDia1 ? `<a href="${g.linkDia1}" target="_blank">🔗 Abrir Planilha</a>` : "<span style='color:#888;'>Pendente</span>"}</div>
+              <div style="margin-top:5px;"><strong>Dia 2 (Dashboard/Relatório):</strong> ${g.linkDia2 ? `<a href="${g.linkDia2}" target="_blank">🔗 Abrir Dashboard</a>` : "<span style='color:#888;'>Pendente</span>"}</div>
             </div>
             <button class="btn-del" data-id="${id}">🗑 Excluir Grupo</button>
           `;
