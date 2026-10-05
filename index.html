@@ -195,7 +195,7 @@
     .id-explicacao-box ul { margin-left: 20px; font-size: 0.88rem; color: #333; }
     .id-explicacao-box li { margin-bottom: 6px; }
 
-    /* Caixa do Módulo Avançado (Novas Atividades) */
+    /* Caixa do Módulo Avançado (3 Abas) */
     .avancado-box {
       background: var(--purple-bg);
       border: 2px solid var(--purple-border);
@@ -233,7 +233,27 @@
     }
     .case-card:hover { transform: translateY(-3px); border-color: var(--primary); }
     .case-card h3 { font-size: 1.05rem; color: var(--primary); margin-bottom: 8px; }
-    .case-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; }
+    .case-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; }
+    
+    /* Box de Equipes Alocadas no Projeto */
+    .equipes-alocadas-box {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+    .equipes-alocadas-box.tem-grupo {
+      background: #e6f4ea;
+      border: 1px solid #ceead6;
+      color: #137333;
+    }
+    .equipes-alocadas-box.sem-grupo {
+      background: #f1f3f4;
+      border: 1px solid #dadce0;
+      color: #5f6368;
+    }
+
     .btn-select {
       background: #e8f0fe;
       color: var(--primary);
@@ -243,6 +263,7 @@
       font-weight: bold;
       cursor: pointer;
       width: 100%;
+      margin-top: 12px;
     }
     .btn-select:hover { background: var(--primary); color: white; }
 
@@ -425,7 +446,7 @@
         </div>
       </div>
 
-      <!-- NOVO MÓDULO AVANÇADO: ESTRUTURAÇÃO DE 3 ABAS PRO NO EXCEL -->
+      <!-- MÓDULO AVANÇADO: ESTRUTURAÇÃO DE 3 ABAS PRO NO EXCEL -->
       <div class="avancado-box">
         <h3>⚡ Desafio de Engenharia de Dados & Estruturação do Excel (Dia 1)</h3>
         <p style="font-size:0.9rem; color:#4b5563;">Sua equipe deve entregar a planilha do Excel organizada obrigatoriamente em <strong>3 Abas Profissionais</strong>:</p>
@@ -486,7 +507,7 @@
 
       <h2>3. Seleção do Desafio de Negócio</h2>
       <p class="description">Escolham 1 dos 7 casos reais abaixo. Cada caso possui uma base bruta de +110 linhas e 5 perguntas específicas.</p>
-      <div id="casesContainer" class="cases-grid"></div>
+      <div id="casesContainer" class="cases-grid">Carregando projetos e equipes alocadas...</div>
     </div>
 
     <!-- PASSO 4: EXECUÇÃO, DADOS E 5 QUESTÕES ANALÍTICAS -->
@@ -720,7 +741,7 @@
           "<b>CONT.SE:</b> Quantificar chamados por tipo de reclamação."
         ],
         perguntas: [
-          "1. Qual foi o Tempo Médio de Atendimento (TMA) geral calculated para a central?",
+          "1. Qual foi o Tempo Médio de Atendimento (TMA) geral calculado para a central?",
           "2. Qual a principal categoria de reclamação/chamado que sobrecarrega a equipe de SAC?",
           "3. Quais falhas e dados ausentes foram corrigidos no histórico de atendimentos?",
           "4. Qual foi o percentual de solução no primeiro contato (First Contact Resolution - FCR)?",
@@ -878,8 +899,9 @@
 
     let currentDocId = sessionStorage.getItem("tgdq_docId") || null;
     let currentGrupoData = JSON.parse(sessionStorage.getItem("tgdq_grupoData")) || null;
+    let unsubscribeCasosListener = null;
 
-    // NAVEGAÇÃO ENTRE PASSOS (SUPORTA VOLTAR E AVANÇAR)
+    // NAVEGAÇÃO ENTRE PASSOS
     window.goToStep = function(stepNumber) {
       document.querySelectorAll(".step-content").forEach(el => el.classList.remove("active"));
       document.querySelectorAll(".step").forEach((el, index) => {
@@ -893,23 +915,68 @@
 
       document.getElementById(`step-${stepNumber}`).classList.add("active");
       document.getElementById(`st-${stepNumber}`).classList.add("active");
+      
+      if (stepNumber === 3) {
+        renderizarCasosComEquipes();
+      }
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    function renderizarCasos() {
-      const container = document.getElementById("casesContainer");
-      container.innerHTML = "";
-      LISTA_CASOS.forEach(caso => {
-        const card = document.createElement("div");
-        card.className = "case-card";
-        card.innerHTML = `
-          <div>
-            <h3>${caso.titulo}</h3>
-            <p>${caso.desc}</p>
-          </div>
-          <button class="btn-select" onclick="selecionarCaso(${caso.id})">Selecionar Este Caso</button>
-        `;
-        container.appendChild(card);
+    // RENDERIZAÇÃO DOS CASOS EM TEMPO REAL MOSTRANDO AS EQUIPES
+    function renderizarCasosComEquipes() {
+      if (unsubscribeCasosListener) {
+        unsubscribeCasosListener();
+      }
+
+      const q = query(collection(db, "grupos"));
+      unsubscribeCasosListener = onSnapshot(q, (snapshot) => {
+        const gruposPorCaso = {};
+        
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          if (data.casoId) {
+            if (!gruposPorCaso[data.casoId]) {
+              gruposPorCaso[data.casoId] = [];
+            }
+            gruposPorCaso[data.casoId].push(data.nomeGrupo);
+          }
+        });
+
+        const container = document.getElementById("casesContainer");
+        container.innerHTML = "";
+
+        LISTA_CASOS.forEach(caso => {
+          const equipesDoCaso = gruposPorCaso[caso.id] || [];
+          let equipesHtml = "";
+
+          if (equipesDoCaso.length > 0) {
+            equipesHtml = `
+              <div class="equipes-alocadas-box tem-grupo">
+                <strong>👥 Equipes neste caso (${equipesDoCaso.length}):</strong><br>
+                ${equipesDoCaso.map(e => `• <b>${e}</b>`).join("<br>")}
+              </div>
+            `;
+          } else {
+            equipesHtml = `
+              <div class="equipes-alocadas-box sem-grupo">
+                <i>Nenhuma equipe escolheu este caso ainda.</i>
+              </div>
+            `;
+          }
+
+          const card = document.createElement("div");
+          card.className = "case-card";
+          card.innerHTML = `
+            <div>
+              <h3>${caso.titulo}</h3>
+              <p>${caso.desc}</p>
+              ${equipesHtml}
+            </div>
+            <button class="btn-select" onclick="selecionarCaso(${caso.id})">Selecionar Este Caso</button>
+          `;
+          container.appendChild(card);
+        });
       });
     }
 
@@ -969,7 +1036,6 @@
     });
 
     document.getElementById("btnIrParaCasos").addEventListener("click", () => {
-      renderizarCasos();
       window.goToStep(3);
     });
 
