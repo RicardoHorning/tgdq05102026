@@ -3,162 +3,330 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro de Grupos - tgdq05102026</title>
+  <title>Plataforma TGDQ - Gestão de Dados Quantitativos</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root {
+      --primary: #1a73e8;
+      --primary-hover: #1557b0;
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --text: #202124;
+      --text-muted: #5f6368;
+      --success: #137333;
+      --success-bg: #e6f4ea;
+      --border: #dadce0;
+      --warning-bg: #fef7e0;
+      --warning-border: #f2994a;
     }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f4f6f9;
-      color: #333;
-      padding: 20px;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 20px 10px;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
+
+    .container { width: 100%; max-width: 950px; }
+
+    header { text-align: center; margin-bottom: 25px; }
+    header h1 { color: var(--primary); font-size: 1.8rem; margin-bottom: 5px; }
+    header p { color: var(--text-muted); font-size: 0.95rem; }
+
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      background: var(--card-bg);
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .step {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step.active { color: var(--primary); }
+    .step.completed { color: var(--success); }
+    .step-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #e8eaed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+    .step.active .step-number { background: var(--primary); color: #fff; }
+    .step.completed .step-number { background: var(--success); color: #fff; }
+
     .card {
-      background: #ffffff;
-      padding: 25px;
+      background: var(--card-bg);
+      padding: 30px;
       border-radius: 14px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-      width: 100%;
-      max-width: 480px;
-    }
-    h2 {
-      color: #1a73e8;
-      margin-bottom: 8px;
-      text-align: center;
-    }
-    p.subtitle {
-      font-size: 0.9rem;
-      color: #666;
-      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
       margin-bottom: 20px;
     }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      font-weight: 600;
-      font-size: 0.85rem;
-      margin-bottom: 5px;
-      color: #444;
-    }
-    input[type="text"] {
+
+    .step-content { display: none; }
+    .step-content.active { display: block; }
+
+    h2 { color: var(--primary); margin-bottom: 15px; font-size: 1.4rem; }
+    p.description { color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem; }
+
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; }
+    input[type="text"], input[type="url"] {
       width: 100%;
       padding: 12px;
-      border: 1px solid #ccc;
+      border: 1px solid var(--border);
       border-radius: 8px;
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s;
     }
-    input[type="text"]:focus {
-      border-color: #1a73e8;
-    }
-    .componentes-title {
-      font-weight: bold;
-      font-size: 0.95rem;
-      margin: 20px 0 10px 0;
-      color: #1a73e8;
-      border-bottom: 2px solid #e8f0fe;
-      padding-bottom: 5px;
-    }
-    button {
+    input:focus { border-color: var(--primary); }
+
+    .btn {
+      display: inline-block;
       width: 100%;
       padding: 14px;
-      background-color: #1a73e8;
+      background-color: var(--primary);
       color: white;
       border: none;
       border-radius: 8px;
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 15px;
-      transition: background-color 0.2s;
-    }
-    button:hover {
-      background-color: #1557b0;
-    }
-    button:disabled {
-      background-color: #a0c3ff;
-      cursor: not-allowed;
-    }
-    .mensagem {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 8px;
       text-align: center;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+    .btn:hover { background-color: var(--primary-hover); }
+
+    .cases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .case-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .case-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+    .case-card h3 { font-size: 1.05rem; color: var(--primary); margin-bottom: 8px; }
+    .case-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; }
+    .btn-select {
+      background: #e8f0fe;
+      color: var(--primary);
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+    .btn-select:hover { background: var(--primary); color: white; }
+
+    .analyst-box {
+      background: var(--warning-bg);
+      border-left: 5px solid var(--warning-border);
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    .analyst-box h4 { color: #b76e00; margin-bottom: 5px; }
+
+    .formula-badge {
+      background: #e8f0fe;
+      color: var(--primary);
+      font-family: monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .detail-section {
+      background: #f8f9fa;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 15px;
+    }
+    .detail-section h4 { color: var(--primary); margin-bottom: 10px; font-size: 1rem; }
+    .detail-section ul { margin-left: 20px; margin-bottom: 15px; font-size: 0.9rem; }
+    .detail-section li { margin-bottom: 6px; }
+
+    .alert {
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
       font-weight: 600;
-      display: none;
+      font-size: 0.9rem;
     }
-    .sucesso {
-      background-color: #e6f4ea;
-      color: #137333;
-      border: 1px solid #ceead6;
-    }
-    .erro {
-      background-color: #fce8e6;
-      color: #c5221f;
-      border: 1px solid #fad2cf;
-    }
+    .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid #ceead6; }
+    .alert-info { background: #e8f0fe; color: #1a73e8; border: 1px solid #d2e3fc; }
+
+    .admin-link { text-align: center; margin-top: 20px; }
+    .btn-admin-toggle { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-size: 0.85rem; }
+    .admin-panel { display: none; margin-top: 25px; border-top: 2px dashed var(--border); padding-top: 20px; }
+    .grupo-item { background: #f8f9fa; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 12px; }
+    .btn-del { background: #d93025; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h2>Cadastro de Equipa</h2>
-    <p class="subtitle">Preencha o nome do grupo e os integrantes da equipa.</p>
+  <div class="container">
+    <header>
+      <h1>Plataforma TGDQ</h1>
+      <p>Tratamento e Gestão de Dados Quantitativos</p>
+    </header>
 
-    <form id="form-grupo">
-      <div class="form-group">
-        <label for="nomeGrupo">NOME DO GRUPO / TRABALHO *</label>
-        <input type="text" id="nomeGrupo" placeholder="Ex: Grupo Alpha" required>
+    <div class="stepper">
+      <div class="step active" id="st-1"><span class="step-number">1</span> Equipe</div>
+      <div class="step" id="st-2"><span class="step-number">2</span> Regras</div>
+      <div class="step" id="st-3"><span class="step-number">3</span> Escolha do Caso</div>
+      <div class="step" id="st-4"><span class="step-number">4</span> Execução & Entrega</div>
+    </div>
+
+    <!-- PASSO 1: CADASTRO -->
+    <div id="step-1" class="card step-content active">
+      <h2>1. Cadastro da Equipe de Analistas</h2>
+      <p class="description">Identifique a equipe antes de ter acesso aos casos de negócios.</p>
+
+      <form id="form-cadastro">
+        <div class="form-group">
+          <label for="nomeGrupo">NOME DO GRUPO / CONSULTORIA *</label>
+          <input type="text" id="nomeGrupo" placeholder="Ex: Data Consulting Group" required>
+        </div>
+
+        <label style="margin-top: 15px; display:block;">Integrantes (Nomes Completos):</label>
+        <div class="form-group"><input type="text" id="aluno1" placeholder="Analista 1 (Obrigatório) *" required></div>
+        <div class="form-group"><input type="text" id="aluno2" placeholder="Analista 2 (Opcional)"></div>
+        <div class="form-group"><input type="text" id="aluno3" placeholder="Analista 3 (Opcional)"></div>
+        <div class="form-group"><input type="text" id="aluno4" placeholder="Analista 4 (Opcional)"></div>
+        <div class="form-group"><input type="text" id="aluno5" placeholder="Analista 5 (Opcional)"></div>
+
+        <button type="submit" id="btnCadastrar" class="btn">Cadastrar Equipe e Avançar →</button>
+      </form>
+    </div>
+
+    <!-- PASSO 2: ORIENTAÇÕES PEDAGÓGICAS E AUTONOMIA -->
+    <div id="step-2" class="card step-content">
+      <h2>2. Diretrizes do Projeto & Autonomia do Analista</h2>
+      
+      <div class="analyst-box">
+        <h4>📌 ATENÇÃO ANALISTAS: VOCÊS TÊM TOTAL AUTONOMIA</h4>
+        <p>A partir de agora, vocês atuam como uma consultoria de inteligência de dados. <strong>O professor não determinará o layout nem a cor da sua planilha.</strong></p>
+        <p style="margin-top:8px;">Cabe à sua equipe decidir como estruturar as abas, aplicar filtros, criar tabelas dinâmicas, formatar valores e montar o dashboard de entrega, desde que respondam com precisão técnica aos indicadores solicitados.</p>
       </div>
 
-      <div class="componentes-title">Componentes (Nomes Completos)</div>
-
-      <div class="form-group">
-        <label for="aluno1">Aluno 1 (Obrigatório) *</label>
-        <input type="text" id="aluno1" placeholder="Nome completo do integrante 1" required>
+      <h3 style="color:var(--primary); font-size:1.1rem; margin-top:20px;">Roteiro de Entregas (2 Dias de Trabalho):</h3>
+      <div style="margin: 15px 0; font-size:0.95rem;">
+        <p><strong>• DIA 1 - Tratamento e Higienização:</strong> Acessar a base bruta "suja", eliminar erros, padronizar formatos e gerar uma base limpa e confiável.</p>
+        <p style="margin-top:8px;"><strong>• DIA 2 - Análise & Diagnóstico Estratégico:</strong> Aplicar fórmulas de negócio, consolidar indicadores (KPIs) e gerar um relatório/dashboard com recomendações de tomada de decisão.</p>
       </div>
 
-      <div class="form-group">
-        <label for="aluno2">Aluno 2 (Opcional)</label>
-        <input type="text" id="aluno2" placeholder="Nome completo do integrante 2">
+      <button id="btnIrParaCasos" class="btn" style="margin-top:15px;">Entendido! Selecionar Caso de Negócio →</button>
+    </div>
+
+    <!-- PASSO 3: ESCOLHA DO CASO -->
+    <div id="step-3" class="card step-content">
+      <h2>3. Seleção do Desafio de Negócio</h2>
+      <p class="description">Escolham 1 dos 7 casos reais abaixo. Cada caso possui uma base de dados específica e um conjunto de regras de negócio.</p>
+      <div id="casesContainer" class="cases-grid"></div>
+    </div>
+
+    <!-- PASSO 4: EXECUÇÃO, DADOS BRUTOS E GUIA DE FÓRMULAS -->
+    <div id="step-4" class="card step-content">
+      <div id="alertSuccess" class="alert alert-success" style="display:none;"></div>
+
+      <h2>4. Espaço de Execução do Analista</h2>
+      <div id="infoGrupoEleito" class="alert alert-info"></div>
+
+      <!-- PAINEL DO CASO SELECIONADO -->
+      <div style="border: 2px solid var(--primary); border-radius: 10px; padding: 20px; background: #fff; margin-bottom: 25px;">
+        <h3 id="displayCasoTitulo" style="color:var(--primary); font-size:1.3rem; margin-bottom:8px;"></h3>
+        <p id="displayCasoDesc" style="font-size:0.95rem; color:#444; margin-bottom:15px;"></p>
+
+        <!-- BOTÃO PARA DADOS BRUTOS -->
+        <div style="background:#e8f0fe; padding:15px; border-radius:8px; display:flex; justify-size:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
+          <div>
+            <strong style="color:var(--primary);">📥 Base de Dados Bruta (Suja):</strong><br>
+            <span style="font-size:0.85rem; color:var(--text-muted);">Copie ou baixe estes dados para começar a limpeza no seu Excel/Google Sheets.</span>
+          </div>
+          <a id="btnDownloadDados" href="#" target="_blank" class="btn" style="width:auto; padding:10px 18px; font-size:0.9rem;">
+            📂 Acessar Base de Dados Bruta
+          </a>
+        </div>
+
+        <!-- DETALHES DE LIMPEZA E FÓRMULAS -->
+        <div class="detail-section">
+          <h4>🧹 1. Inconsistências Esperadas nesta Base (Limpeza - Dia 1):</h4>
+          <ul id="listSujeiras"></ul>
+
+          <h4>📐 2. Guia de Fórmulas & Ocasião de Uso (Cálculos - Dia 2):</h4>
+          <ul id="listFormulas"></ul>
+
+          <h4>🎯 3. Perguntas de Negócio que o seu Dashboard deve responder:</h4>
+          <ul id="listPerguntas"></ul>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="aluno3">Aluno 3 (Opcional)</label>
-        <input type="text" id="aluno3" placeholder="Nome completo do integrante 3">
-      </div>
+      <!-- FORMULÁRIO DE ENTREGA DE LINKS -->
+      <form id="form-entregas" style="background:#fafafa; border:1px solid var(--border); padding:20px; border-radius:10px;">
+        <h3 style="color:var(--primary); font-size:1.1rem; margin-bottom:15px;">📤 Submissão de Links do Trabalho</h3>
 
-      <div class="form-group">
-        <label for="aluno4">Aluno 4 (Opcional)</label>
-        <input type="text" id="aluno4" placeholder="Nome completo do integrante 4">
-      </div>
+        <div class="form-group">
+          <label for="linkDia1">🔗 DIA 1: Link da Planilha Tratada (Google Sheets ou OneDrive Share)</label>
+          <input type="url" id="linkDia1" placeholder="https://docs.google.com/spreadsheets/d/..." required>
+        </div>
 
-      <div class="form-group">
-        <label for="aluno5">Aluno 5 (Opcional)</label>
-        <input type="text" id="aluno5" placeholder="Nome completo do integrante 5">
-      </div>
+        <div class="form-group" style="margin-top: 15px;">
+          <label for="linkDia2">🔗 DIA 2: Link da Apresentação / Dashboard (Canva, Slides, Looker)</label>
+          <input type="url" id="linkDia2" placeholder="https://canva.com/design/... ou https://docs.google.com/presentation/...">
+        </div>
 
-      <button type="submit" id="btnSalvar">Enviar Cadastro</button>
-    </form>
+        <button type="submit" id="btnSalvarEntregas" class="btn" style="margin-top:15px;">Salvar / Atualizar Links de Entrega</button>
+      </form>
+    </div>
 
-    <div id="mensagem" class="mensagem"></div>
+    <!-- ÁREA DO PROFESSOR -->
+    <div class="admin-link">
+      <button id="btnToggleProf" class="btn-admin-toggle">🔐 Área do Professor (Painel Geral)</button>
+    </div>
+
+    <div id="profPanel" class="admin-panel card">
+      <h2 style="text-align:center;">Painel do Professor</h2>
+      <p class="description" style="text-align:center;">Acompanhamento de equipes e validação de entregas.</p>
+      <div id="listaGruposAdmin">Carregando dados...</div>
+    </div>
+
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { 
+      getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Credenciais exatas do projeto tgdq05102026
     const firebaseConfig = {
       apiKey: "AIzaSyCJM8s236L882LnfMzwxzqf9vayEMXanKg",
       authDomain: "tgdq05102026.firebaseapp.com",
@@ -172,16 +340,203 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const form = document.getElementById("form-grupo");
-    const btnSalvar = document.getElementById("btnSalvar");
-    const mensagemEl = document.getElementById("mensagem");
+    // BASE DE CONHECIMENTO COMPLETA COM INSTRUÇÕES, FÓRMULAS E LINKS DOS 7 CASOS
+    const LISTA_CASOS = [
+      {
+        id: 1,
+        titulo: "Caso 1: Retenção de Clientes (Churn E-Commerce)",
+        desc: "Análise de evasão de clientes em uma loja virtual com dados corrompidos de compras e datas.",
+        linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing", // Exemplo de link da base bruta
+        sujeiras: [
+          "IDs de Clientes duplicados com informações conflitantes.",
+          "Datas de última compra no formato texto (DD/MM/AAAA e MM/DD/AAAA misturados).",
+          "Valores de faturamento formatados com símbolo de moeda como texto (ex: 'R$ 150,00' inviabilizando somas).",
+          "Registros vazios no campo 'Status de Cancelamento'."
+        ],
+        formulas: [
+          "<b>PROCV ou XLOOKUP:</b> Usar para cruzar o cadastro de clientes com a tabela de histórico de compras pelo ID.",
+          "<b>DIAS ou DATEDIF:</b> Usar para calcular o tempo sem comprar: <span class='formula-badge'>=HOJE() - Data_Ultima_Compra</span>. Define se o cliente está inativo.",
+          "<b>SE (IF):</b> Classificar se o cliente deu Churn: <span class='formula-badge'>=SE(Dias_Inativo > 90; 'Churn'; 'Ativo')</span>.",
+          "<b>Taxa de Churn (%):</b> <span class='formula-badge'>=(Total de Clientes Churn / Total Geral de Clientes) * 100</span>. Usada para medir o impacto geral no negócio."
+        ],
+        perguntas: [
+          "Qual é a Taxa de Churn geral da empresa?",
+          "Qual categoria de produtos apresenta maior perda de clientes?",
+          "Qual ação imediata a equipe comercial deve tomar com base nos dados?"
+        ]
+      },
+      {
+        id: 2,
+        titulo: "Caso 2: Otimização Logística e Fretes",
+        desc: "Diagnóstico de atrasos e custos de fretes em entregas estaduais com inconsistências geográficas.",
+        linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
+        sujeiras: [
+          "CEPs informados sem o zero à esquerda ou com caracteres especiais.",
+          "Datas de entrega efetiva anteriores à data de envio (erro de digitação).",
+          "Pesos de mercadoria em gramas e quilos misturados na mesma coluna.",
+          "Cidades com nomes grafados incorretamente (ex: 'Symptom', 'Sao Paulo', 'S. Paulo')."
+        ],
+        formulas: [
+          "<b>TEXTO ou CONCATENAR:</b> Ajustar formato de CEP e padronizar textos das cidades.",
+          "<b>SE (IF) para Atrasos:</b> Identificar estouro de prazo: <span class='formula-badge'>=SE(Data_Entrega > Data_Prometida; 1; 0)</span>.",
+          "<b>MÉDIASE (AVERAGEIF):</b> Usar para calcular o Custo Médio do Frete por Região/Estado.",
+          "<b>Indicador OTIF (% On-Time In-Full):</b> <span class='formula-badge'>=(Entregas no Prazo / Total de Entregas) * 100</span>. Usado para medir a eficiência da transportadora."
+        ],
+        perguntas: [
+          "Qual transportadora tem o menor índice OTIF (pior desempenho)?",
+          "Qual região geográfica consome o maior custo proporcional de frete?",
+          "Quais rotas precisam de renegociação contratual?"
+        ]
+      },
+      {
+        id: 3,
+        titulo: "Caso 3: Previsão de Demanda e Ruptura de Vendas",
+        desc: "Ajuste de estoque e projeção de vendas evitando falta de produtos na prateleira.",
+        linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
+        sujeiras: [
+          "Séries temporais com dias faltantes no histórico de vendas.",
+          "Outliers acidentais (ex: venda registrada como 99999 unidades por erro no caixa).",
+          "Nomes de produtos idênticos com códigos de barras diferentes."
+        ],
+        formulas: [
+          "<b>MÉDIA / MENSAL:</b> Calcular a venda média diária do produto para estimar a demanda futura.",
+          "<b>MÁXIMO e MÍNIMO:</b> Identificar picos e discrepâncias de vendas (outliers).",
+          "<b>Estoque de Segurança:</b> <span class='formula-badge'>=(Venda Máxima Diária * Prazo Entrega) - (Venda Média Diária * Prazo Entrega)</span>. Usado para evitar ruptura.",
+          "<b>Dias de Cobertura de Estoque:</b> <span class='formula-badge'>=Estoque Atual / Venda Média Diária</span>. Indica quantos dias o estoque dura."
+        ],
+        perguntas: [
+          "Quais produtos correm risco iminente de ruptura (estoque zerado)?",
+          "Quais itens estão com excesso de estoque (capital parado)?",
+          "Qual o plano de compras recomendado para o próximo mês?"
+        ]
+      },
+      {
+        id: 4,
+        titulo: "Caso 4: Gestão de Estoque e Curva ABC (SKUs)",
+        desc: "Classificação estratégica de inventário de almoxarifado por relevância financeira.",
+        linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
+        sujeiras: [
+          "Código SKU com espaços antes ou depois do texto (dificultando PROCV).",
+          "Valores unitários zerados ou negativos.",
+          "Unidades de medida inconsistentes (ex: 'CX', 'CAIXA', 'UN', 'UNIDADE')."
+        ],
+        formulas: [
+          "<b>ARRUMAR (TRIM):</b> Remover espaços invisíveis dos códigos SKUs.",
+          "<b>SOMASE (SUMIF):</b> Multiplicar Quantidade x Custo Unitário para obter o Valor Total em Estoque por item.",
+          "<b>% Acumulada (Curva ABC):</b> Ordenar itens do maior valor para o menor e calcular a participação relativa acumulada.",
+          "<b>Giro de Estoque:</b> <span class='formula-badge'>=Custo das Mercadorias Vendidas (CMV) / Valor Médio do Estoque</span>."
+        ],
+        perguntas: [
+          "Quais SKUs pertencem à Classe A (representam ~80% do valor imobilizado)?",
+          "Existem produtos de baixa rotatividade acumulando custos de armazenagem?",
+          "Como a empresa deve priorizar as contagens físicas de inventário?"
+        ]
+      },
+      {
+        id: 5,
+        titulo: "Caso 5: Eficiência do Atendimento ao Cliente (SAC)",
+        desc: "Análise de tempo de resposta e qualidade de suporte em central de chamados.",
+        linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
+        sujeiras: [
+          "Horários de abertura e fechamento registrados como texto comum.",
+          "Chamados sem data de encerramento marcada.",
+          "Categorias de problemas inconsistentes (ex: 'Dúvida', 'DUVIDAS', 'Erro de Login', 'Login')."
+        ],
+        formulas: [
+          "<b>HORA / MINUTO ou Subtração Direta:</b> <span class='formula-badge'>=Data_Hora_Fim - Data_Hora_Inicio</span> (Formatado como [h]:mm) para achar o TMA.",
+          "<b>Tempo Médio de Atendimento (TMA):</b> <span class='formula-badge'>=MÉDIA(Coluna_TMA)</span>. Usado para medir a agilidade da equipe.",
+          "<b>First Contact Resolution (FCR %):</b> <span class='formula-badge'>=(Chamados Resolvidos no 1º Contato / Total Chamados) * 100</span>.",
+          "<b>CONT.SE (COUNTIF):</b> Contar volume de chamados por categoria de problema."
+        ],
+        perguntas: [
+          "Qual é o TMA médio da equipe por turno de trabalho?",
+          "Qual é o principal motivo de abertura de chamados na central?",
+          "Onde está o gargalo operacional que causa insatisfação do cliente?"
+        ]
+      },
+      {
+        id: 6,
+        titulo: "Caso 6: Análise de Inadimplência e Risco de Crédito",
+        desc: "Avaliação de carteira financeira e inadimplência de pagamentos de clientes corporativos.",
+        linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
+        sujeiras: [
+          "Valores de dívida salvos como números decimais com vírgula e ponto trocados.",
+          "CNPJ/CPF sem formatação de zeros à esquerda.",
+          "Status de pagamento ambíguos ('Pago', 'PG', 'PAGO_OK', 'Em Aberto')."
+        ],
+        formulas: [
+          "<b>SUBSTITUIR (SUBSTITUTE):</b> Corrigir pontos e vírgulas para transformar texto em número real.",
+          "<b>Taxa de Inadimplência (%):</b> <span class='formula-badge'>=(Valor de Títulos Vencidos e Não Pagos / Valor Total Concedido) * 100</span>.",
+          "<b>SE encadeado / IFS:</b> Classificar Faixas de Atraso (0-30 dias, 31-60 dias, >90 dias).",
+          "<b>SOMASE (SUMIF):</b> Mapear o montante financeiro em risco por região ou segmento de cliente."
+        ],
+        perguntas: [
+          "Qual a taxa de inadimplência atual da carteira?",
+          "Qual perfil de cliente apresenta o maior risco de calote?",
+          "Qual política de cobrança preventiva deve ser adotada?"
+        ]
+      },
+      {
+        id: 7,
+        titulo: "Caso 7: Desempenho e Comissões da Equipe de Vendas",
+        desc: "Cálculo de metas, bonificações e eficiência da força de vendas regional.",
+        linkDados: "https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing",
+        sujeiras: [
+          "Relatórios regionais fragmentados e com vendas contadas duas vezes (duplicidade).",
+          "Nomes de vendedores grafados com variações (ex: 'João Silva', 'J. Silva').",
+          "Metas cadastradas em aba separada sem chave de conexão direta."
+        ],
+        formulas: [
+          "<b>PROCV / XLOOKUP:</b> Trazer a Meta do vendedor para ao lado da sua Venda Realizada.",
+          "<b>% Atingimento de Meta:</b> <span class='formula-badge'>=(Venda Realizada / Meta) * 100</span>.",
+          "<b>SE (IF) para Comissão Gradativa:</b> <span class='formula-badge'>=SE(Atingimento >= 100%; Venda * 5%; Venda * 2%)</span>. Calcula a remuneração variável.",
+          "<b>RANKING / MAIOR:</b> Identificar os melhores vendedores do mês."
+        ],
+        perguntas: [
+          "Quais vendedores atingiram 100% da meta estipulada?",
+          "Qual é o custo total de comissões que a empresa pagará neste mês?",
+          "Qual região teve o pior desempenho relativo em relação à meta?"
+        ]
+      }
+    ];
 
-    form.addEventListener("submit", async (e) => {
+    let currentDocId = sessionStorage.getItem("tgdq_docId") || null;
+    let currentGrupoData = JSON.parse(sessionStorage.getItem("tgdq_grupoData")) || null;
+
+    function goToStep(stepNumber) {
+      document.querySelectorAll(".step-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".step").forEach((el, index) => {
+        el.classList.remove("active");
+        if (index + 1 < stepNumber) el.classList.add("completed");
+      });
+
+      document.getElementById(`step-${stepNumber}`).classList.add("active");
+      document.getElementById(`st-${stepNumber}`).classList.add("active");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderizarCasos() {
+      const container = document.getElementById("casesContainer");
+      container.innerHTML = "";
+      LISTA_CASOS.forEach(caso => {
+        const card = document.createElement("div");
+        card.className = "case-card";
+        card.innerHTML = `
+          <div>
+            <h3>${caso.titulo}</h3>
+            <p>${caso.desc}</p>
+          </div>
+          <button class="btn-select" onclick="selecionarCaso(${caso.id})">Selecionar Este Caso</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById("form-cadastro").addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      btnSalvar.disabled = true;
-      btnSalvar.innerText = "A enviar...";
-      mensagemEl.style.display = "none";
+      const btn = document.getElementById("btnCadastrar");
+      btn.disabled = true;
+      btn.innerText = "Registrando...";
 
       const componentes = [
         document.getElementById("aluno1").value.trim(),
@@ -189,31 +544,195 @@
         document.getElementById("aluno3").value.trim(),
         document.getElementById("aluno4").value.trim(),
         document.getElementById("aluno5").value.trim()
-      ].filter(nome => nome !== "");
+      ].filter(n => n !== "");
+
+      const novoGrupo = {
+        nomeGrupo: document.getElementById("nomeGrupo").value.trim(),
+        componentes: componentes,
+        casoId: null,
+        casoTitulo: "",
+        linkDia1: "",
+        linkDia2: "",
+        dataEnvio: serverTimestamp()
+      };
 
       try {
-        await addDoc(collection(db, "grupos"), {
-          nomeGrupo: document.getElementById("nomeGrupo").value.trim(),
-          componentes: componentes,
-          dataEnvio: serverTimestamp()
-        });
+        const docRef = await addDoc(collection(db, "grupos"), novoGrupo);
+        currentDocId = docRef.id;
+        currentGrupoData = novoGrupo;
 
-        mensagemEl.className = "mensagem sucesso";
-        mensagemEl.innerText = "✅ Cadastro enviado com sucesso!";
-        mensagemEl.style.display = "block";
+        sessionStorage.setItem("tgdq_docId", currentDocId);
+        sessionStorage.setItem("tgdq_grupoData", JSON.stringify(currentGrupoData));
 
-        form.reset();
-      } catch (error) {
-        console.error("Erro ao guardar:", error);
-        mensagemEl.className = "mensagem erro";
-        mensagemEl.innerText = "❌ Erro ao enviar dados. Verifique se o Firestore está ativo no Firebase.";
-        mensagemEl.style.display = "block";
+        goToStep(2);
+      } catch (err) {
+        alert("Erro ao cadastrar equipe.");
+        console.error(err);
       } finally {
-        btnSalvar.disabled = false;
-        btnSalvar.innerText = "Enviar Cadastro";
+        btn.disabled = false;
+        btn.innerText = "Cadastrar Equipe e Avançar →";
       }
     });
-  </script>
 
+    document.getElementById("btnIrParaCasos").addEventListener("click", () => {
+      renderizarCasos();
+      goToStep(3);
+    });
+
+    window.selecionarCaso = async function(casoId) {
+      if (!currentDocId) {
+        alert("Cadastre sua equipe primeiro!");
+        goToStep(1);
+        return;
+      }
+
+      const caso = LISTA_CASOS.find(c => c.id === casoId);
+      
+      try {
+        const groupRef = doc(db, "grupos", currentDocId);
+        await updateDoc(groupRef, {
+          casoId: caso.id,
+          casoTitulo: caso.titulo
+        });
+
+        currentGrupoData.casoId = caso.id;
+        currentGrupoData.casoTitulo = caso.titulo;
+        sessionStorage.setItem("tgdq_grupoData", JSON.stringify(currentGrupoData));
+
+        prepararPasso4(caso);
+        goToStep(4);
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao selecionar caso.");
+      }
+    };
+
+    function prepararPasso4(caso) {
+      document.getElementById("infoGrupoEleito").innerHTML = `
+        <strong>Equipe:</strong> ${currentGrupoData.nomeGrupo} | <strong>Componentes:</strong> ${currentGrupoData.componentes.join(", ")}
+      `;
+      document.getElementById("displayCasoTitulo").innerText = caso.titulo;
+      document.getElementById("displayCasoDesc").innerText = caso.desc;
+      document.getElementById("btnDownloadDados").href = caso.linkDados;
+
+      // Renderizar Sujeiras
+      const ulS = document.getElementById("listSujeiras");
+      ulS.innerHTML = caso.sujeiras.map(s => `<li>${s}</li>`).join("");
+
+      // Renderizar Fórmulas
+      const ulF = document.getElementById("listFormulas");
+      ulF.innerHTML = caso.formulas.map(f => `<li>${f}</li>`).join("");
+
+      // Renderizar Perguntas
+      const ulP = document.getElementById("listPerguntas");
+      ulP.innerHTML = caso.perguntas.map(p => `<li>${p}</li>`).join("");
+
+      if (currentGrupoData.linkDia1) document.getElementById("linkDia1").value = currentGrupoData.linkDia1;
+      if (currentGrupoData.linkDia2) document.getElementById("linkDia2").value = currentGrupoData.linkDia2;
+    }
+
+    document.getElementById("form-entregas").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnSalvarEntregas");
+      btn.disabled = true;
+      btn.innerText = "Gravando no Banco...";
+
+      const l1 = document.getElementById("linkDia1").value.trim();
+      const l2 = document.getElementById("linkDia2").value.trim();
+
+      try {
+        const groupRef = doc(db, "grupos", currentDocId);
+        await updateDoc(groupRef, {
+          linkDia1: l1,
+          linkDia2: l2,
+          ultimaAtualizacao: serverTimestamp()
+        });
+
+        currentGrupoData.linkDia1 = l1;
+        currentGrupoData.linkDia2 = l2;
+        sessionStorage.setItem("tgdq_grupoData", JSON.stringify(currentGrupoData));
+
+        const alertEl = document.getElementById("alertSuccess");
+        alertEl.innerText = "✅ Links salvos com sucesso no sistema do professor!";
+        alertEl.style.display = "block";
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao salvar links.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Salvar / Atualizar Links de Entrega";
+      }
+    });
+
+    // Módulo de Administração do Professor
+    const btnToggleProf = document.getElementById("btnToggleProf");
+    const profPanel = document.getElementById("profPanel");
+    let isAuthed = false;
+
+    btnToggleProf.addEventListener("click", () => {
+      if (!isAuthed) {
+        const pwd = prompt("Digite a senha do professor:");
+        if (pwd === "1234") {
+          isAuthed = true;
+          profPanel.style.display = "block";
+          carregarDashboardAdmin();
+        } else if (pwd !== null) {
+          alert("Senha incorreta!");
+        }
+      } else {
+        profPanel.style.display = profPanel.style.display === "none" ? "block" : "none";
+      }
+    });
+
+    function carregarDashboardAdmin() {
+      const q = query(collection(db, "grupos"), orderBy("dataEnvio", "desc"));
+      
+      onSnapshot(q, (snapshot) => {
+        const container = document.getElementById("listaGruposAdmin");
+        if (snapshot.empty) {
+          container.innerHTML = "<p style='text-align:center;'>Nenhum grupo cadastrado ainda.</p>";
+          return;
+        }
+
+        container.innerHTML = "";
+        snapshot.forEach((snapDoc) => {
+          const g = snapDoc.data();
+          const id = snapDoc.id;
+
+          const item = document.createElement("div");
+          item.className = "grupo-item";
+          item.innerHTML = `
+            <h4 style="color:var(--primary);">${g.nomeGrupo} <span style="font-size:0.85rem; color:#666;">(${g.casoTitulo || "Caso não selecionado"})</span></h4>
+            <p style="font-size:0.85rem; margin-top:4px;"><strong>Analistas:</strong> ${g.componentes ? g.componentes.join(", ") : ""}</p>
+            <div style="margin: 10px 0; font-size: 0.85rem; background:#fff; padding:10px; border-radius:6px; border:1px solid #e0e0e0;">
+              <div><strong>Dia 1 (Planilha Tratada):</strong> ${g.linkDia1 ? `<a href="${g.linkDia1}" target="_blank">🔗 Abrir Planilha</a>` : "<span style='color:#888;'>Não enviado</span>"}</div>
+              <div style="margin-top:5px;"><strong>Dia 2 (Dashboard/Relatório):</strong> ${g.linkDia2 ? `<a href="${g.linkDia2}" target="_blank">🔗 Abrir Dashboard</a>` : "<span style='color:#888;'>Não enviado</span>"}</div>
+            </div>
+            <button class="btn-del" data-id="${id}">🗑 Excluir Grupo</button>
+          `;
+          container.appendChild(item);
+        });
+
+        document.querySelectorAll(".btn-del").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            const docId = e.target.getAttribute("data-id");
+            if (confirm("Remover esta equipe do sistema?")) {
+              await deleteDoc(doc(db, "grupos", docId));
+            }
+          });
+        });
+      });
+    }
+
+    if (currentDocId && currentGrupoData) {
+      if (currentGrupoData.casoId) {
+        const c = LISTA_CASOS.find(item => item.id === currentGrupoData.casoId);
+        prepararPasso4(c);
+        goToStep(4);
+      } else {
+        goToStep(2);
+      }
+    }
+  </script>
 </body>
 </html>
