@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Grupos - tgdq05102026</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 480px;
+    }
+    h2 {
+      color: #1a73e8;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    p.subtitle {
+      font-size: 0.9rem;
+      color: #666;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+      color: #444;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: #1a73e8;
+    }
+    .componentes-title {
+      font-weight: bold;
+      font-size: 0.95rem;
+      margin: 20px 0 10px 0;
+      color: #1a73e8;
+      border-bottom: 2px solid #e8f0fe;
+      padding-bottom: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #1557b0;
+    }
+    button:disabled {
+      background-color: #a0c3ff;
+      cursor: not-allowed;
+    }
+    .mensagem {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+    .sucesso {
+      background-color: #e6f4ea;
+      color: #137333;
+      border: 1px solid #ceead6;
+    }
+    .erro {
+      background-color: #fce8e6;
+      color: #c5221f;
+      border: 1px solid #fad2cf;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Cadastro de Equipa</h2>
+    <p class="subtitle">Preencha o nome do grupo e os integrantes da equipa.</p>
+
+    <form id="form-grupo">
+      <div class="form-group">
+        <label for="nomeGrupo">NOME DO GRUPO / TRABALHO *</label>
+        <input type="text" id="nomeGrupo" placeholder="Ex: Grupo Alpha" required>
+      </div>
+
+      <div class="componentes-title">Componentes (Nomes Completos)</div>
+
+      <div class="form-group">
+        <label for="aluno1">Aluno 1 (Obrigatório) *</label>
+        <input type="text" id="aluno1" placeholder="Nome completo do integrante 1" required>
+      </div>
+
+      <div class="form-group">
+        <label for="aluno2">Aluno 2 (Opcional)</label>
+        <input type="text" id="aluno2" placeholder="Nome completo do integrante 2">
+      </div>
+
+      <div class="form-group">
+        <label for="aluno3">Aluno 3 (Opcional)</label>
+        <input type="text" id="aluno3" placeholder="Nome completo do integrante 3">
+      </div>
+
+      <div class="form-group">
+        <label for="aluno4">Aluno 4 (Opcional)</label>
+        <input type="text" id="aluno4" placeholder="Nome completo do integrante 4">
+      </div>
+
+      <div class="form-group">
+        <label for="aluno5">Aluno 5 (Opcional)</label>
+        <input type="text" id="aluno5" placeholder="Nome completo do integrante 5">
+      </div>
+
+      <button type="submit" id="btnSalvar">Enviar Cadastro</button>
+    </form>
+
+    <div id="mensagem" class="mensagem"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Credenciais exatas do projeto tgdq05102026
+    const firebaseConfig = {
+      apiKey: "AIzaSyCJM8s236L882LnfMzwxzqf9vayEMXanKg",
+      authDomain: "tgdq05102026.firebaseapp.com",
+      projectId: "tgdq05102026",
+      storageBucket: "tgdq05102026.firebasestorage.app",
+      messagingSenderId: "40232951059",
+      appId: "1:40232951059:web:73473b07cB21bc3857cee6",
+      measurementId: "G-5YXD0307BD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("form-grupo");
+    const btnSalvar = document.getElementById("btnSalvar");
+    const mensagemEl = document.getElementById("mensagem");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      btnSalvar.disabled = true;
+      btnSalvar.innerText = "A enviar...";
+      mensagemEl.style.display = "none";
+
+      const componentes = [
+        document.getElementById("aluno1").value.trim(),
+        document.getElementById("aluno2").value.trim(),
+        document.getElementById("aluno3").value.trim(),
+        document.getElementById("aluno4").value.trim(),
+        document.getElementById("aluno5").value.trim()
+      ].filter(nome => nome !== "");
+
+      try {
+        await addDoc(collection(db, "grupos"), {
+          nomeGrupo: document.getElementById("nomeGrupo").value.trim(),
+          componentes: componentes,
+          dataEnvio: serverTimestamp()
+        });
+
+        mensagemEl.className = "mensagem sucesso";
+        mensagemEl.innerText = "✅ Cadastro enviado com sucesso!";
+        mensagemEl.style.display = "block";
+
+        form.reset();
+      } catch (error) {
+        console.error("Erro ao guardar:", error);
+        mensagemEl.className = "mensagem erro";
+        mensagemEl.innerText = "❌ Erro ao enviar dados. Verifique se o Firestore está ativo no Firebase.";
+        mensagemEl.style.display = "block";
+      } finally {
+        btnSalvar.disabled = false;
+        btnSalvar.innerText = "Enviar Cadastro";
+      }
+    });
+  </script>
+
+</body>
+</html>
