@@ -633,12 +633,12 @@
     <div id="modalDados" class="modal-overlay">
       <div class="modal-content">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="color:var(--primary);">Base de Dados Bruta (~120 Linhas)</h3>
+          <h3 style="color:var(--primary);" id="tituloModalDados">Base de Dados Bruta (~120 Linhas)</h3>
           <button onclick="document.getElementById('modalDados').style.display='none'" style="background:#888; color:#fff; border:none; padding:5px 12px; border-radius:4px; cursor:pointer;">Fechar X</button>
         </div>
         <p style="font-size:0.85rem; color:#666; margin-top:5px;">Clique abaixo para copiar tudo e cole direto no seu Excel.</p>
         
-        <button onclick="window.copiarTabelaExcel()" class="btn btn-green" style="margin-top:10px; padding:10px; font-size:0.9rem;">
+        <button id="btnCopiarModalGeral" onclick="window.copiarTabelaExcel()" class="btn btn-green" style="margin-top:10px; padding:10px; font-size:0.9rem;">
           📋 Copiar Tabela Inteira (Ctrl + V no Excel)
         </button>
 
@@ -671,8 +671,24 @@
         <h2 style="margin:0;">👑 Módulo do Professor / Administrador & Avaliador</h2>
         <button id="btnFecharAdmin" style="background:#888; color:#fff; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Fechar Painel</button>
       </div>
-      <p class="description">Notas automáticas calculadas, devolutivas e auditoria dos links entregues.</p>
-      
+
+      <!-- VISUALIZADOR DE CASOS PARA O PROFESSOR (SEM CADASTRO) -->
+      <div style="background:#e8f0fe; border:2px solid var(--primary); padding:18px; border-radius:10px; margin-bottom:25px;">
+        <h3 style="color:var(--primary); font-size:1.15rem; margin-bottom:6px;">👁 Visualizador / Gabarito de Casos (Modo Professor)</h3>
+        <p style="font-size:0.88rem; color:#444; margin-bottom:12px;">Escolha qualquer um dos 7 casos para visualizar suas regras, perguntas, fórmulas e baixar a base bruta sem precisar de cadastro:</p>
+        
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:15px;">
+          <select id="selectCasoProf" style="padding:10px; border-radius:6px; border:1px solid var(--border); font-size:0.9rem; flex:1; min-width:250px;">
+            <option value="">-- Selecione um caso para visualizar --</option>
+          </select>
+        </div>
+
+        <div id="containerDetalhesCasoProf" style="display:none; background:#fff; padding:15px; border-radius:8px; border:1px solid #b6d4fe;">
+          <!-- Conteúdo dinâmico do caso escolhido pelo professor -->
+        </div>
+      </div>
+
+      <p class="description"><strong>Acompanhamento das Equipes e Notas Automáticas:</strong></p>
       <div id="listaGruposAdmin">Carregando dados das equipes...</div>
     </div>
 
@@ -980,7 +996,6 @@
       let nota = 0.0;
       let rubrica = [];
 
-      // 1. Integrantes com Nome + Sobrenome (2.0 PONTOS)
       const comp = g.componentes || [];
       let nomesValidos = 0;
       comp.forEach(n => {
@@ -994,7 +1009,6 @@
         rubrica.push(`⚠️ Integrantes Incompletos (${desc}): 0,0 / 2,0 pts`);
       }
 
-      // 2. Escolha do Caso de Negócio (1.0 PONTO)
       if (g.casoId) {
         nota += 1.0;
         rubrica.push("✅ Escolha de Caso Prático: +1,0 pt");
@@ -1002,10 +1016,9 @@
         rubrica.push("❌ Caso de Negócio Não Selecionado: 0,0 / 1,0 pt");
       }
 
-      // 3. Devolutiva das 5 Questões Analíticas (4.0 PONTOS - 0.8 cada)
       const respostas = [g.respostaQ1, g.respostaQ2, g.respostaQ3, g.respostaQ4, g.respostaQ5];
       let ptsRespostas = 0;
-      respostas.forEach((r, idx) => {
+      respostas.forEach((r) => {
         if (r && r.trim().length >= 40) {
           ptsRespostas += 0.8;
         } else if (r && r.trim().length > 10) {
@@ -1015,7 +1028,6 @@
       nota += ptsRespostas;
       rubrica.push(`📝 5 Respostas Analíticas (${ptsRespostas.toFixed(1)} / 4,0 pts)`);
 
-      // 4. Link da Planilha Tratada - Dia 1 (1.5 PONTOS)
       if (g.linkDia1 && g.linkDia1.trim().startsWith("http")) {
         nota += 1.5;
         rubrica.push("✅ Link da Planilha Tratada (Dia 1): +1,5 pts");
@@ -1023,7 +1035,6 @@
         rubrica.push("❌ Link da Planilha Tratada Pendente: 0,0 / 1,5 pts");
       }
 
-      // 5. Link do Dashboard/Apresentação - Dia 2 (1.5 PONTOS)
       if (g.linkDia2 && g.linkDia2.trim().startsWith("http")) {
         nota += 1.5;
         rubrica.push("✅ Link do Dashboard (Dia 2): +1,5 pts");
@@ -1052,7 +1063,6 @@
       document.getElementById(`step-${stepNumber}`).classList.add("active");
       document.getElementById(`st-${stepNumber}`).classList.add("active");
       
-      // PREENCHER DADOS NO PASSO 1 PARA EDIÇÃO
       if (stepNumber === 1 && currentGrupoData) {
         const banner = document.getElementById("sessionBanner");
         document.getElementById("sessionBannerText").innerText = `✅ Sua equipe "${currentGrupoData.nomeGrupo}" está aberta para edição de nomes.`;
@@ -1076,7 +1086,6 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // RENDERIZAÇÃO DOS CASOS EM TEMPO REAL MOSTRANDO AS EQUIPES ALOCADAS
     function renderizarCasosComEquipes() {
       if (unsubscribeCasosListener) {
         unsubscribeCasosListener();
@@ -1133,7 +1142,6 @@
       });
     }
 
-    // SUBMISSÃO E VALIDAÇÃO RIGOROSA DO CADASTRO DE GRUPO
     document.getElementById("form-cadastro").addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = document.getElementById("btnCadastrar");
@@ -1149,7 +1157,6 @@
         document.getElementById("aluno5").value.trim()
       ].filter(n => n !== "");
 
-      // 1. Validação de Nome e Sobrenome para todos os alunos preenchidos
       for (let i = 0; i < camposAlunos.length; i++) {
         if (!eNomeSobrenomeCompleto(camposAlunos[i])) {
           alert(`⚠️ O integrante "${camposAlunos[i]}" precisa ter NOME e SOBRENOME completos!`);
@@ -1160,7 +1167,6 @@
       }
 
       try {
-        // 2. Consulta no Firebase para impedir duplicidade de Grupos ou Alunos
         const snapshotGrupos = await getDocs(collection(db, "grupos"));
         let nomeGrupoDuplicado = false;
         let alunoDuplicadoNome = null;
@@ -1199,7 +1205,6 @@
           return;
         }
 
-        // 3. Gravação se aprovado nas validações
         const novoGrupo = {
           nomeGrupo: nomeGrupoInput,
           componentes: camposAlunos,
@@ -1300,24 +1305,42 @@
       if (currentGrupoData.linkDia2) document.getElementById("linkDia2").value = currentGrupoData.linkDia2;
     }
 
+    // DOWNLOAD E VISUALIZAÇÃO DE TABELA DO ALUNO
     window.baixarCSV = function() {
       if (!currentGrupoData || !currentGrupoData.casoId) return;
-      const rows = gerarLinhasSujasCaso(currentGrupoData.casoId);
-      let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + rows.map(e => e.map(cell => `"${cell}"`).join(";")).join("\n");
-      let encodedUri = encodeURI(csvContent);
-      let link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `Base_Suja_Caso_${currentGrupoData.casoId}_110Linhas.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      executarDownloadCSV(currentGrupoData.casoId);
     };
 
     window.abrirModalDados = function() {
       if (!currentGrupoData || !currentGrupoData.casoId) return;
-      const rows = gerarLinhasSujasCaso(currentGrupoData.casoId);
+      exibirModalTabela(currentGrupoData.casoId);
+    };
+
+    // DOWNLOAD E VISUALIZAÇÃO DE TABELA PARA O PROFESSOR (SEM DEPENDER DE GRUPO)
+    function executarDownloadCSV(casoId) {
+      const rows = gerarLinhasSujasCaso(casoId);
+      let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + rows.map(e => e.map(cell => `"${cell}"`).join(";")).join("\n");
+      let encodedUri = encodeURI(csvContent);
+      let link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Base_Suja_Caso_${casoId}_110Linhas.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exibirModalTabela(casoId) {
+      const rows = gerarLinhasSujasCaso(casoId);
       const tabela = document.getElementById("tabelaDados");
       tabela.innerHTML = "";
+
+      document.getElementById("tituloModalDados").innerText = `Base Bruta do Caso ${casoId} (+110 Linhas)`;
+      document.getElementById("btnCopiarModalGeral").onclick = function() {
+        let text = rows.map(r => r.join("\t")).join("\n");
+        navigator.clipboard.writeText(text).then(() => {
+          alert("✅ Tabela inteira (+110 linhas) copiada para a área de transferência!");
+        });
+      };
 
       rows.forEach((row, idx) => {
         let tr = document.createElement("tr");
@@ -1330,7 +1353,7 @@
       });
 
       document.getElementById("modalDados").style.display = "flex";
-    };
+    }
 
     window.copiarTabelaExcel = function() {
       if (!currentGrupoData || !currentGrupoData.casoId) return;
@@ -1361,7 +1384,7 @@
         return;
       }
 
-      let totalLinhas = linhas.length - 1; // excluindo cabeçalho
+      let totalLinhas = linhas.length - 1;
       let celulasVazias = 0;
       let errosFormula = 0;
       let colunasCount = linhas[0].split("\t").length;
@@ -1443,7 +1466,7 @@
       }
     });
 
-    // MÓDULO DO PROFESSOR COM AVALIADOR AUTOMÁTICO DE NOTAS
+    // MÓDULO DO PROFESSOR COM VISUALIZADOR DE CASOS
     const btnToggleProfTop = document.getElementById("btnToggleProfTop");
     const profPanel = document.getElementById("profPanel");
     const btnFecharAdmin = document.getElementById("btnFecharAdmin");
@@ -1455,6 +1478,7 @@
         if (pwd === "1234") {
           isAuthed = true;
           profPanel.style.display = "block";
+          inicializarVisualizadorCasosProf();
           carregarDashboardAdmin();
           window.scrollTo({ top: profPanel.offsetTop, behavior: 'smooth' });
         } else if (pwd !== null) {
@@ -1471,6 +1495,67 @@
     btnToggleProfTop.addEventListener("click", abrirPainelProfessor);
     btnFecharAdmin.addEventListener("click", () => { profPanel.style.display = "none"; });
 
+    function inicializarVisualizadorCasosProf() {
+      const select = document.getElementById("selectCasoProf");
+      if (select.children.length > 1) return; // Já populado
+
+      LISTA_CASOS.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.innerText = c.titulo;
+        select.appendChild(opt);
+      });
+
+      select.addEventListener("change", (e) => {
+        const casoId = parseInt(e.target.value);
+        const container = document.getElementById("containerDetalhesCasoProf");
+        
+        if (!casoId) {
+          container.style.display = "none";
+          return;
+        }
+
+        const caso = LISTA_CASOS.find(item => item.id === casoId);
+        container.innerHTML = `
+          <h4 style="color:var(--primary); font-size:1.1rem; margin-bottom:6px;">${caso.titulo}</h4>
+          <p style="font-size:0.9rem; color:#555; margin-bottom:12px;">${caso.desc}</p>
+          
+          <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+            <button id="btnProfCSV" class="btn btn-green" style="padding:8px 14px; font-size:0.85rem; width:auto;">📥 Baixar CSV da Base Bruta</button>
+            <button id="btnProfTabela" class="btn" style="padding:8px 14px; font-size:0.85rem; width:auto; background:#5f6368;">📋 Copiar / Visualizar Tabela</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:15px; font-size:0.85rem;">
+            <div style="background:#f8f9fa; padding:12px; border-radius:6px; border:1px solid #ddd;">
+              <strong style="color:var(--primary);">🧹 Inconsistências (Erros a Limpar):</strong>
+              <ul style="margin-left:18px; margin-top:6px; color:#444;">
+                ${caso.sujeiras.map(s => `<li>${s}</li>`).join("")}
+              </ul>
+            </div>
+
+            <div style="background:#f8f9fa; padding:12px; border-radius:6px; border:1px solid #ddd;">
+              <strong style="color:var(--primary);">📐 Guia de Fórmulas Sugeridas:</strong>
+              <ul style="margin-left:18px; margin-top:6px; color:#444;">
+                ${caso.formulas.map(f => `<li>${f}</li>`).join("")}
+              </ul>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; background:#fafafa; padding:12px; border-radius:6px; border:1px solid #ddd; font-size:0.85rem;">
+            <strong style="color:var(--primary);">📝 As 5 Perguntas Analíticas da Devolutiva:</strong>
+            <ol style="margin-left:20px; margin-top:6px; color:#333;">
+              ${caso.perguntas.map(p => `<li style="margin-bottom:4px;">${p}</li>`).join("")}
+            </ol>
+          </div>
+        `;
+
+        document.getElementById("btnProfCSV").onclick = () => executarDownloadCSV(caso.id);
+        document.getElementById("btnProfTabela").onclick = () => exibirModalTabela(caso.id);
+
+        container.style.display = "block";
+      });
+    }
+
     function carregarDashboardAdmin() {
       const q = query(collection(db, "grupos"), orderBy("dataEnvio", "desc"));
       
@@ -1486,7 +1571,6 @@
           const g = snapDoc.data();
           const id = snapDoc.id;
 
-          // CÁLCULO DA NOTA AUTOMÁTICA E RUBRICA DE AVALIAÇÃO
           const avaliacao = calcularNotaGrupo(g);
           const notaNum = parseFloat(avaliacao.notaNum);
 
