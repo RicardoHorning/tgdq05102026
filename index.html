@@ -17,6 +17,8 @@
       --border: #dadce0;
       --warning-bg: #fef7e0;
       --warning-border: #f2994a;
+      --purple-bg: #f3e8ff;
+      --purple-border: #9333ea;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -137,6 +139,24 @@
     .btn-green { background-color: #1e8e3e; }
     .btn-green:hover { background-color: #137333; }
 
+    /* Botão Voltar Secundário */
+    .btn-back {
+      background-color: #f1f3f4;
+      color: #3c4043;
+      border: 1px solid #dadce0;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .btn-back:hover { background-color: #e8eaed; color: #202124; }
+
     /* Estilo dos Passos de Orientação Fácil */
     .guia-passos { display: flex; flex-direction: column; gap: 15px; margin: 20px 0; }
     .guia-card {
@@ -174,6 +194,26 @@
     .id-explicacao-box h4 { color: var(--primary); margin-bottom: 8px; font-size: 1rem; }
     .id-explicacao-box ul { margin-left: 20px; font-size: 0.88rem; color: #333; }
     .id-explicacao-box li { margin-bottom: 6px; }
+
+    /* Caixa do Módulo Avançado (Novas Atividades) */
+    .avancado-box {
+      background: var(--purple-bg);
+      border: 2px solid var(--purple-border);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+    .avancado-box h3 { color: #6b21a8; font-size: 1.15rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .avancado-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 15px; }
+    .aba-card {
+      background: #ffffff;
+      border: 1px solid #d8b4fe;
+      padding: 14px;
+      border-radius: 8px;
+    }
+    .aba-card h4 { color: #7e22ce; font-size: 0.95rem; margin-bottom: 6px; }
+    .aba-card p { font-size: 0.85rem; color: #4b5563; }
+    .aba-card ul { margin-left: 18px; font-size: 0.82rem; color: #374151; margin-top: 6px; }
 
     .cases-grid {
       display: grid;
@@ -338,6 +378,8 @@
 
     <!-- PASSO 2: ORIENTAÇÃO FÁCIL E EXPLICATIVA -->
     <div id="step-2" class="card step-content">
+      <button onclick="window.goToStep(1)" class="btn-back">← Voltar para Cadastro da Equipe</button>
+
       <h2>2. Guia Passo a Passo: O que vocês devem fazer?</h2>
       <p class="description">Siga este roteiro simples para realizar todo o trabalho com sucesso:</p>
 
@@ -362,7 +404,7 @@
           <div class="guia-num">3</div>
           <div class="guia-info">
             <h4>Limpe e Organize os Dados (Atividade do DIA 1)</h4>
-            <p>Elimine linhas repetidas, corrija a formatação dos números/moedas e deixe a planilha 100% limpa e confiável. Cole o link da sua planilha limpa no site.</p>
+            <p>Elimine linhas repetidas, corrija a formatação dos números/moedas e crie a estrutura de 3 abas na sua planilha tratada. Cole o link da planilha no site.</p>
           </div>
         </div>
 
@@ -383,7 +425,42 @@
         </div>
       </div>
 
-      <!-- NOVO PAINEL EXPLICATIVO SOBRE O ID NAS PLANILHAS -->
+      <!-- NOVO MÓDULO AVANÇADO: ESTRUTURAÇÃO DE 3 ABAS PRO NO EXCEL -->
+      <div class="avancado-box">
+        <h3>⚡ Desafio de Engenharia de Dados & Estruturação do Excel (Dia 1)</h3>
+        <p style="font-size:0.9rem; color:#4b5563;">Sua equipe deve entregar a planilha do Excel organizada obrigatoriamente em <strong>3 Abas Profissionais</strong>:</p>
+        
+        <div class="avancado-grid">
+          <div class="aba-card">
+            <h4>1️⃣ Aba: [1_Base_Tratada]</h4>
+            <p>Sua base 100% limpa e sem erros. Adicione 2 colunas calculadas de <strong>Scoring/Segmentação</strong>:</p>
+            <ul>
+              <li>Coluna de Classificação por Quartil/Percentil (Ex: Prata, Ouro, Platina).</li>
+              <li>Coluna de Matriz de Priorização usando <span class='formula-badge'>=SE(E(...))</span>.</li>
+            </ul>
+          </div>
+
+          <div class="aba-card">
+            <h4>2️⃣ Aba: [2_Auditoria_DQ]</h4>
+            <p>Mini-painel automático de <strong>Qualidade de Dados (Data Quality)</strong> com fórmulas:</p>
+            <ul>
+              <li><span class='formula-badge'>=CONT.SE</span> para checar vazios (deve dar 0).</li>
+              <li><span class='formula-badge'>=ÉERROS</span> para checar #N/A (deve dar 0).</li>
+              <li>Contador de duplicadas remanescentes (deve dar 0).</li>
+            </ul>
+          </div>
+
+          <div class="aba-card">
+            <h4>3️⃣ Aba: [3_Dicionario_Dados]</h4>
+            <p>Tabela de <strong>Governança de Dados</strong> documentando todas as colunas:</p>
+            <ul>
+              <li>Nome da Coluna | Tipo de Dado | Regra de Negócio | Limite Válido | Tratamento Aplicado.</li>
+              <li>Exemplo de Lista Suspensa (Validação de Dados) configurada.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       <div class="id-explicacao-box">
         <h4>🔑 Entendendo o Código de Identificação (ID) na Planilha:</h4>
         <ul>
@@ -398,11 +475,15 @@
         💡 <strong>Dica Importante:</strong> Vocês atuam como consultores analistas. Não existe regra de cor ou layout para a planilha. Sejam organizados e claros nas análises!
       </div>
 
-      <button id="btnIrParaCasos" class="btn">Entendido! Escolher Nosso Caso de Negócio →</button>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="btnIrParaCasos" class="btn" style="flex:2; min-width:220px;">Entendido! Escolher Nosso Caso de Negócio →</button>
+      </div>
     </div>
 
     <!-- PASSO 3: ESCOLHA DO CASO -->
     <div id="step-3" class="card step-content">
+      <button onclick="window.goToStep(2)" class="btn-back">← Voltar para Orientações</button>
+
       <h2>3. Seleção do Desafio de Negócio</h2>
       <p class="description">Escolham 1 dos 7 casos reais abaixo. Cada caso possui uma base bruta de +110 linhas e 5 perguntas específicas.</p>
       <div id="casesContainer" class="cases-grid"></div>
@@ -410,6 +491,8 @@
 
     <!-- PASSO 4: EXECUÇÃO, DADOS E 5 QUESTÕES ANALÍTICAS -->
     <div id="step-4" class="card step-content">
+      <button onclick="window.goToStep(3)" class="btn-back">← Voltar e Trocar de Caso</button>
+
       <div id="alertSuccess" class="alert alert-success" style="display:none;"></div>
 
       <h2>4. Espaço de Execução e Resposta do Analista</h2>
@@ -440,6 +523,13 @@
 
           <h4>📐 Guia de Fórmulas Sugeridas (Cálculos - Dia 2):</h4>
           <ul id="listFormulas"></ul>
+
+          <h4 style="color:#6b21a8; margin-top:15px;">📊 Estrutura Exigida das 3 Abas no Excel (Dia 1 - Avançado):</h4>
+          <ul style="color:#4b5563;">
+            <li><strong>Aba [1_Base_Tratada]:</strong> Dados limpos + Colunas calculadas de Scoring/Priorização com <span class='formula-badge'>=SE(E(...))</span>.</li>
+            <li><strong>Aba [2_Auditoria_DQ]:</strong> Painel de Controle de Qualidade com <span class='formula-badge'>=CONT.SE</span> zerado para erros/vazios.</li>
+            <li><strong>Aba [3_Dicionario_Dados]:</strong> Tabela de Governança documentando o significado de cada coluna e regras de validação.</li>
+          </ul>
         </div>
       </div>
 
@@ -519,7 +609,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // DADOS DOS 7 CASOS COM 5 QUESTÕES ANALÍTICAS CADA
     const LISTA_CASOS = [
       {
         id: 1,
@@ -686,7 +775,6 @@
       }
     ];
 
-    // GERADOR DE LINHAS SUJAS (+110 LINHAS)
     function gerarLinhasSujasCaso(casoId) {
       let rows = [];
       if (casoId === 1) {
@@ -791,17 +879,22 @@
     let currentDocId = sessionStorage.getItem("tgdq_docId") || null;
     let currentGrupoData = JSON.parse(sessionStorage.getItem("tgdq_grupoData")) || null;
 
-    function goToStep(stepNumber) {
+    // NAVEGAÇÃO ENTRE PASSOS (SUPORTA VOLTAR E AVANÇAR)
+    window.goToStep = function(stepNumber) {
       document.querySelectorAll(".step-content").forEach(el => el.classList.remove("active"));
       document.querySelectorAll(".step").forEach((el, index) => {
         el.classList.remove("active");
-        if (index + 1 < stepNumber) el.classList.add("completed");
+        if (index + 1 < stepNumber) {
+          el.classList.add("completed");
+        } else {
+          el.classList.remove("completed");
+        }
       });
 
       document.getElementById(`step-${stepNumber}`).classList.add("active");
       document.getElementById(`st-${stepNumber}`).classList.add("active");
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    };
 
     function renderizarCasos() {
       const container = document.getElementById("casesContainer");
@@ -850,14 +943,22 @@
       };
 
       try {
-        const docRef = await addDoc(collection(db, "grupos"), novoGrupo);
-        currentDocId = docRef.id;
-        currentGrupoData = novoGrupo;
-
+        if (!currentDocId) {
+          const docRef = await addDoc(collection(db, "grupos"), novoGrupo);
+          currentDocId = docRef.id;
+        } else {
+          const groupRef = doc(db, "grupos", currentDocId);
+          await updateDoc(groupRef, {
+            nomeGrupo: novoGrupo.nomeGrupo,
+            componentes: componentes
+          });
+        }
+        
+        currentGrupoData = { ...currentGrupoData, ...novoGrupo };
         sessionStorage.setItem("tgdq_docId", currentDocId);
         sessionStorage.setItem("tgdq_grupoData", JSON.stringify(currentGrupoData));
 
-        goToStep(2);
+        window.goToStep(2);
       } catch (err) {
         alert("Erro ao cadastrar equipe.");
         console.error(err);
@@ -869,13 +970,13 @@
 
     document.getElementById("btnIrParaCasos").addEventListener("click", () => {
       renderizarCasos();
-      goToStep(3);
+      window.goToStep(3);
     });
 
     window.selecionarCaso = async function(casoId) {
       if (!currentDocId) {
         alert("Cadastre sua equipe primeiro!");
-        goToStep(1);
+        window.goToStep(1);
         return;
       }
 
@@ -893,7 +994,7 @@
         sessionStorage.setItem("tgdq_grupoData", JSON.stringify(currentGrupoData));
 
         prepararPasso4(caso);
-        goToStep(4);
+        window.goToStep(4);
       } catch (err) {
         console.error(err);
         alert("Erro ao selecionar caso.");
@@ -910,7 +1011,6 @@
       document.getElementById("listSujeiras").innerHTML = caso.sujeiras.map(s => `<li>${s}</li>`).join("");
       document.getElementById("listFormulas").innerHTML = caso.formulas.map(f => `<li>${f}</li>`).join("");
 
-      // RENDERIZAR AS 5 PERGUNTAS ANALÍTICAS
       const containerP = document.getElementById("containerPerguntas");
       containerP.innerHTML = "";
       caso.perguntas.forEach((pText, idx) => {
@@ -929,7 +1029,6 @@
       if (currentGrupoData.linkDia2) document.getElementById("linkDia2").value = currentGrupoData.linkDia2;
     }
 
-    // BAIXAR CSV
     window.baixarCSV = function() {
       if (!currentGrupoData || !currentGrupoData.casoId) return;
       const rows = gerarLinhasSujasCaso(currentGrupoData.casoId);
@@ -943,7 +1042,6 @@
       document.body.removeChild(link);
     };
 
-    // MODAL DE TABELA
     window.abrirModalDados = function() {
       if (!currentGrupoData || !currentGrupoData.casoId) return;
       const rows = gerarLinhasSujasCaso(currentGrupoData.casoId);
@@ -963,7 +1061,6 @@
       document.getElementById("modalDados").style.display = "flex";
     };
 
-    // COPIAR TABELA INTEIRA
     window.copiarTabelaExcel = function() {
       if (!currentGrupoData || !currentGrupoData.casoId) return;
       const rows = gerarLinhasSujasCaso(currentGrupoData.casoId);
@@ -973,7 +1070,6 @@
       });
     };
 
-    // ENVIAR RESPOSTAS E LINKS
     document.getElementById("form-entregas").addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = document.getElementById("btnSalvarEntregas");
@@ -1025,7 +1121,7 @@
       }
     });
 
-    // PAINEL DO PROFESSOR
+    // MÓDULO DO PROFESSOR
     const btnToggleProfTop = document.getElementById("btnToggleProfTop");
     const profPanel = document.getElementById("profPanel");
     const btnFecharAdmin = document.getElementById("btnFecharAdmin");
@@ -1080,7 +1176,7 @@
             </div>
 
             <details style="font-size:0.85rem; background:#e8f0fe; padding:10px; border-radius:6px; margin-bottom:10px;">
-              <summary style="font-weight:bold; cursor:pointer; color:var(--primary);">👁️️ Ver Respostas das 5 Questões Analíticas</summary>
+              <summary style="font-weight:bold; cursor:pointer; color:var(--primary);">👁 Ver Respostas das 5 Questões Analíticas</summary>
               <div style="margin-top:10px; color:#333; line-height:1.4;">
                 <p><strong>Q1:</strong> ${g.respostaQ1 || "<i>Sem resposta</i>"}</p>
                 <p style="margin-top:6px;"><strong>Q2:</strong> ${g.respostaQ2 || "<i>Sem resposta</i>"}</p>
@@ -1110,9 +1206,9 @@
       if (currentGrupoData.casoId) {
         const c = LISTA_CASOS.find(item => item.id === currentGrupoData.casoId);
         prepararPasso4(c);
-        goToStep(4);
+        window.goToStep(4);
       } else {
-        goToStep(2);
+        window.goToStep(2);
       }
     }
   </script>
